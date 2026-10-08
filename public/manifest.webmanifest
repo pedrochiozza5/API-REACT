@@ -1,0 +1,12 @@
+{
+  "name": "Bien Amargos",
+  "short_name": "Bien Amargos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f3ea",
+  "theme_color": "#164b36",
+  "icons": [
+    {"src":"/brand/favicon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"/brand/favicon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}
