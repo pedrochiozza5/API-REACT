@@ -5,6 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import App from './App';
 import './styles.css';
+import './v86-hero.css';
+import './v86-product-a.css';
+import './v86-product-b.css';
+import './v86-product-c.css';
+import './v86-controls.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {
