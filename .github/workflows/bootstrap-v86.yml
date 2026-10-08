@@ -1,0 +1,47 @@
+name: Bootstrap V8.6 source
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/bootstrap-v86.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout V8.6 work branch
+        uses: actions/checkout@v4
+        with:
+          ref: v86-source
+          fetch-depth: 0
+
+      - name: Extract V8.5 source
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARCHIVE="bienamargos_bienyerbados_HOSTINGER_V8.5.zip"
+          test -f "$ARCHIVE"
+          TMP="$(mktemp -d)"
+          unzip -q "$ARCHIVE" -d "$TMP"
+          rm -f "$ARCHIVE"
+          rsync -a --exclude=".git" "$TMP"/ ./
+          rm -rf "$TMP"
+
+      - name: Commit extracted source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "Bootstrap V8.6 source from V8.5 archive"
+          git push origin HEAD:v86-source
