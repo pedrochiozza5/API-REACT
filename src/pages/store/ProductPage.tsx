@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { motion } from 'motion/react';
 import { Header } from '@/components/storefront/Header';
 import { Footer } from '@/components/storefront/Footer';
-import { ProductGallery } from '@/components/storefront/ProductGallery';
+import { ProductGallery } from '@/components/storefront/ProductGalleryV86';
 import { StoreBackdrop } from '@/components/storefront/StoreBackdrop';
 import { BrandGlyph } from '@/components/storefront/BrandGlyph';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -72,9 +72,19 @@ export function ProductPage() {
 
   const gallery = useMemo<ProductImage[]>(() => {
     if (!product) return [];
-    return selected?.images?.length ? selected.images : product.images || [];
+    const all = [
+      ...(selected?.images || []),
+      ...(product.images || []),
+    ];
+    const seen = new Set<string>();
+    return all.filter((image) => {
+      const url = String(image?.imageUrl || '').trim();
+      if (!url || seen.has(url)) return false;
+      seen.add(url);
+      return true;
+    });
   }, [product, selected]);
-  const fallback = selected?.imageUrl || product?.imageUrl;
+  const fallback = selected?.imageUrl || product?.imageUrl || gallery[0]?.imageUrl || null;
   const recoveryFallback = product ? legacyProductImage(product) : null;
   const imageZoom = Number(selected?.imageZoom ?? product?.imageZoom ?? 1.03);
   const imagePositionX = Number(selected?.imagePositionX ?? product?.imagePositionX ?? 50);
