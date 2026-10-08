@@ -13,20 +13,20 @@
 .product-gallery-v86-blur{position:absolute;inset:-4%;overflow:hidden}
 .product-gallery-v86-blur:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(238,233,223,.42),rgba(238,233,223,.1) 52%,rgba(20,27,22,.08))}
 .product-gallery-v86-blur img{width:100%;height:100%;object-fit:cover;filter:blur(30px) saturate(.82);transform:scale(1.1);opacity:.42}
-.product-gallery-v86-product{position:absolute;inset:0;display:grid;place-items:center;padding:28px 460px 28px 42px}
+.product-gallery-v86-product{position:absolute;inset:0;display:grid;place-items:center;padding:30px 34px 88px}
 .product-gallery-v86-product>div{width:100%;height:100%;background:transparent!important}
-.product-gallery-v86-product img{object-fit:contain!important;filter:drop-shadow(0 24px 42px rgba(12,23,16,.11))}
+.product-gallery-v86-product img{object-fit:contain!important;object-position:42% 50%!important;filter:drop-shadow(0 24px 42px rgba(12,23,16,.11))}
 .product-gallery-v86-arrow{position:absolute;z-index:24;top:50%;display:grid;width:50px;height:50px;place-items:center;border:1px solid rgba(18,33,25,.13);border-radius:999px;background:rgba(250,247,239,.94);color:#142a20;transform:translateY(-50%);backdrop-filter:blur(14px);box-shadow:0 8px 24px rgba(16,28,19,.08)}
-.product-gallery-v86-arrow.is-left{left:24px}.product-gallery-v86-arrow.is-right{right:470px}
+.product-gallery-v86-arrow.is-left{left:24px}.product-gallery-v86-arrow.is-right{right:440px}
 .product-gallery-v86-counter{position:absolute;z-index:24;left:24px;bottom:24px;border:1px solid rgba(18,33,25,.1);border-radius:999px;background:rgba(250,247,239,.92);padding:9px 12px;font-family:"DM Mono",monospace;font-size:8px;font-weight:900;letter-spacing:.12em;color:#173429;backdrop-filter:blur(12px)}
-.product-gallery-v86-thumbs{position:absolute;z-index:24;left:50%;bottom:20px;display:flex;max-width:46vw;gap:8px;overflow-x:auto;transform:translateX(-62%);padding:3px;scrollbar-width:none}
+.product-gallery-v86-thumbs{position:absolute;z-index:24;left:42%;bottom:20px;display:flex;max-width:54vw;gap:8px;overflow-x:auto;transform:translateX(-50%);padding:3px;scrollbar-width:none}
 .product-gallery-v86-thumbs::-webkit-scrollbar{display:none}
 .product-gallery-v86-thumbs button{width:62px;height:62px;flex:0 0 62px;overflow:hidden;border:1px solid rgba(18,33,25,.12);border-radius:12px;background:rgba(250,247,239,.78);padding:3px;opacity:.58;transition:.18s ease}
 .product-gallery-v86-thumbs button.is-active,.product-gallery-v86-thumbs button:hover{border-color:#123f2e;background:#fff;opacity:1;transform:translateY(-2px)}
 .product-gallery-v86-thumbs button>div{width:100%;height:100%;border-radius:9px;overflow:hidden}
-.product-gallery-v86-expand{position:absolute;z-index:24;right:470px;bottom:24px;display:flex;align-items:center;gap:8px;border:1px solid rgba(18,33,25,.12);border-radius:999px;background:rgba(250,247,239,.94);padding:10px 13px;color:#173429;font-size:9px;font-weight:900;backdrop-filter:blur(12px)}
+.product-gallery-v86-expand{position:absolute;z-index:24;right:440px;bottom:24px;display:flex;align-items:center;gap:8px;border:1px solid rgba(18,33,25,.12);border-radius:999px;background:rgba(250,247,239,.94);padding:10px 13px;color:#173429;font-size:9px;font-weight:900;backdrop-filter:blur(12px)}
 
-.product-info-v85{position:absolute!important;right:22px!important;top:50%!important;width:410px!important;max-height:calc(100% - 44px)!important;overflow:auto!important;transform:translateY(-50%)!important;border:1px solid rgba(255,255,255,.55)!important;border-radius:26px!important;background:rgba(250,247,239,.94)!important;padding:30px!important;box-shadow:0 24px 80px rgba(15,28,20,.12)!important;backdrop-filter:blur(22px)!important}
+.product-info-v85{position:absolute!important;right:18px!important;top:50%!important;width:388px!important;max-height:calc(100% - 44px)!important;overflow:auto!important;transform:translateY(-50%)!important;border:1px solid rgba(255,255,255,.55)!important;border-radius:26px!important;background:rgba(250,247,239,.94)!important;padding:28px!important;box-shadow:0 24px 80px rgba(15,28,20,.12)!important;backdrop-filter:blur(22px)!important}
 .product-title-v85{max-width:12ch!important;font-size:clamp(2.3rem,3.4vw,4rem)!important;line-height:.9!important;letter-spacing:-.065em!important}
 .product-price-v85{font-size:clamp(1.9rem,2.3vw,2.8rem)!important}
 
