@@ -36,13 +36,15 @@ export function ProductCard({ product }: { product: Product }) {
   const discount = hasDiscount ? Math.max(1, Math.round((1 - price / compare) * 100)) : 0;
 
   const legacyPrimary = legacyProductImage(product);
-  const media = useMemo(() => Array.from(new Set([
-    preview?.imageUrl,
-    product.imageUrl,
-    ...(preview?.images || []).map((image) => image.imageUrl),
-    ...(product.images || []).map((image) => image.imageUrl),
-    legacyPrimary,
-  ].filter((url): url is string => Boolean(url)))), [preview, product.imageUrl, product.images, legacyPrimary]);
+  const media = useMemo(() => {
+    const actual = Array.from(new Set([
+      preview?.imageUrl,
+      product.imageUrl,
+      ...(preview?.images || []).map((image) => image.imageUrl),
+      ...(product.images || []).map((image) => image.imageUrl),
+    ].filter((url): url is string => Boolean(url))));
+    return actual.length ? actual : [legacyPrimary].filter((url): url is string => Boolean(url));
+  }, [preview, product.imageUrl, product.images, legacyPrimary]);
   useEffect(() => setMediaIndex(0), [product.id, preview?.id, media.length]);
   const primary = media[mediaIndex] || media[0] || legacyPrimary;
   const zoom = Math.min(Number(preview?.imageZoom ?? product.imageZoom ?? 1.03), 1.03);
