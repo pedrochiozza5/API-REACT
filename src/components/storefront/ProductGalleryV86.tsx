@@ -20,7 +20,7 @@ type Props = {
 export function ProductGallery(props: Props) {
   const { images, fallback, recoveryFallback, name, categoryName, zoom=1, positionX=50, positionY=50, blendMode='normal' } = props;
   const urls = useMemo(() => Array.from(new Set(
-    [fallback, ...(images || []).map(x => x.imageUrl), recoveryFallback]
+    [fallback, ...(images || []).map(x => x.imageUrl)]
       .map(x => String(x || '').trim()).filter(Boolean)
   )), [fallback, images, recoveryFallback]);
 
