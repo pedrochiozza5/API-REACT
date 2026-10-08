@@ -22,7 +22,7 @@ export function Header({ brand, solid = false, hideMobileDock = false }: { brand
   useEffect(()=>{const onScroll=()=>{const y=window.scrollY;setScrolled(y>38);if(!hideMobileDock&&y>140){setDockCompact(y>lastY.current+5);}else setDockCompact(false);lastY.current=y;};onScroll();window.addEventListener('scroll',onScroll,{passive:true});return()=>window.removeEventListener('scroll',onScroll);},[hideMobileDock]);
   useEffect(()=>{const key=(e:KeyboardEvent)=>{if(e.key==='/'&&!['INPUT','TEXTAREA'].includes((e.target as HTMLElement)?.tagName)){e.preventDefault();setSearchOpen(true);} if(e.key==='Escape'){setSearchOpen(false);setMobileOpen(false);}};window.addEventListener('keydown',key);return()=>window.removeEventListener('keydown',key);},[]);
   useEffect(()=>setMobileOpen(false),[location.pathname,location.search]);
-  const elevated=solid||scrolled||mobileOpen; const storeClosed=settings.data?.settings?.store_status==='closed'; const announcement=storeClosed?'Tienda pausada · Estamos preparando la próxima ronda':settings.data?.settings?.announcement;
+  const elevated=solid||scrolled||mobileOpen;
   const homePath=en?'/yerbados':'/'; const catalogPath=`/catalogo?brand=${brand}`;
   const homeActive=location.pathname===homePath; const catalogActive=location.pathname==='/catalogo'; const worldActive=location.pathname==='/materos-por-el-mundo';
   function submit(e:FormEvent){e.preventDefault();const q=term.trim();setSearchOpen(false);navigate(`/catalogo?brand=${brand}${q?`&q=${encodeURIComponent(q)}`:''}`);}
