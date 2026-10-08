@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -21,7 +21,7 @@ export function ProductCard({ product }: { product: Product }) {
     setPreview((current) => variants.find((variant) => variant.id === current?.id) || variants.find((variant) => !variant.trackStock || Number(variant.stockQty) > 0) || variants[0] || null);
   }, [product.id, variants]);
   const [picker, setPicker] = useState(false);
-  const [invalidSecond, setInvalidSecond] = useState<string | null>(null);
+  const [mediaIndex, setMediaIndex] = useState(0);
 
   const stock = variants.length ? variants.reduce((sum, v) => sum + Number(v.stockQty || 0), 0) : Number(product.stockQty);
   const sold = product.hasVariants && variants.length === 0
@@ -36,14 +36,15 @@ export function ProductCard({ product }: { product: Product }) {
   const discount = hasDiscount ? Math.max(1, Math.round((1 - price / compare) * 100)) : 0;
 
   const legacyPrimary = legacyProductImage(product);
-  const primary = preview?.imageUrl || product.imageUrl || product.images?.[0]?.imageUrl || legacyPrimary;
-  const fallbackPrimary = product.images?.find((image) => image.imageUrl !== primary)?.imageUrl || (primary !== legacyPrimary ? legacyPrimary : null);
-  const secondaryCandidates = [
+  const media = useMemo(() => Array.from(new Set([
+    preview?.imageUrl,
+    product.imageUrl,
     ...(preview?.images || []).map((image) => image.imageUrl),
     ...(product.images || []).map((image) => image.imageUrl),
-  ].filter((url): url is string => Boolean(url) && url !== primary);
-  const secondCandidate = Array.from(new Set(secondaryCandidates))[0] || null;
-  const second = secondCandidate && secondCandidate !== invalidSecond ? secondCandidate : null;
+    legacyPrimary,
+  ].filter((url): url is string => Boolean(url)))), [preview, product.imageUrl, product.images, legacyPrimary]);
+  useEffect(() => setMediaIndex(0), [product.id, preview?.id, media.length]);
+  const primary = media[mediaIndex] || media[0] || legacyPrimary;
   const zoom = Math.min(Number(preview?.imageZoom ?? product.imageZoom ?? 1.03), 1.03);
   const positionX = Number(preview?.imagePositionX ?? product.imagePositionX ?? 50);
   const positionY = Number(preview?.imagePositionY ?? product.imagePositionY ?? 50);
@@ -73,7 +74,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="relative aspect-square overflow-hidden bg-[#f5f2ea]">
           <ProductImage
             src={primary}
-            fallbackSrc={fallbackPrimary}
+            fallbackSrc={legacyPrimary}
             alt={product.name}
             categoryName={product.categoryName}
             zoom={zoom}
@@ -81,21 +82,13 @@ export function ProductCard({ product }: { product: Product }) {
             positionY={positionY}
             blendMode={blendMode}
             className="absolute inset-0"
-            imageClassName={`duration-500 ${second ? 'group-hover:opacity-0' : ''}`}
+            imageClassName="duration-300"
           />
-          {second && <ProductImage
-            src={second}
-            alt={`${product.name} · segunda vista`}
-            categoryName={product.categoryName}
-            zoom={zoom}
-            positionX={positionX}
-            positionY={positionY}
-            blendMode={blendMode}
-            empty="none"
-            onInvalid={() => setInvalidSecond(second)}
-            className="absolute inset-0"
-            imageClassName="opacity-0 duration-500 group-hover:opacity-100"
-          />}
+          {media.length > 1 && <>
+            <button type="button" aria-label="Imagen anterior" onClick={(event)=>{event.preventDefault();event.stopPropagation();setMediaIndex(index=>(index-1+media.length)%media.length);}} className="absolute left-2 top-1/2 z-20 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] opacity-100 shadow-sm backdrop-blur-sm transition sm:opacity-0 sm:group-hover:opacity-100"><ChevronLeft size={15}/></button>
+            <button type="button" aria-label="Imagen siguiente" onClick={(event)=>{event.preventDefault();event.stopPropagation();setMediaIndex(index=>(index+1)%media.length);}} className="absolute right-2 top-1/2 z-20 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] opacity-100 shadow-sm backdrop-blur-sm transition sm:opacity-0 sm:group-hover:opacity-100"><ChevronRight size={15}/></button>
+            <div className="absolute inset-x-0 bottom-2 z-20 flex justify-center gap-1.5">{media.map((_,index)=><button type="button" key={index} aria-label={`Ver imagen ${index+1}`} onClick={(event)=>{event.preventDefault();event.stopPropagation();setMediaIndex(index);}} className={`h-1.5 rounded-full transition-all ${index===mediaIndex?'w-5 bg-[#173e2e]':'w-1.5 bg-[#173e2e]/30'}`}/>)}</div>
+          </>}
 
           <div className="absolute left-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-2">
             {hasDiscount && <span className="product-offer-badge">-{discount}% OFF</span>}
