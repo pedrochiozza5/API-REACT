@@ -10,6 +10,7 @@ import './v86-product-a.css';
 import './v86-product-b.css';
 import './v86-product-c.css';
 import './v86-controls.css';
+import './v86-thumbs.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {
