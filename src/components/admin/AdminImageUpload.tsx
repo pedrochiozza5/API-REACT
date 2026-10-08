@@ -92,7 +92,6 @@ export function AdminImageActions({
         try {
           const media = await uploadAdminImage(selected[i], p => setProgress(Math.round(((i + p / 100) / selected.length) * 100)));
           uploaded.push(media);
-          onUploaded?.(media);
           if (recommendedMin > 0 && media.width && media.height && (media.width < recommendedMin || media.height < recommendedMin)) {
             toast.warning(`Imagen ${media.width}×${media.height}px. ${recommendationLabel} ${recommendedMin}×${recommendedMin}.`);
           }
@@ -103,11 +102,18 @@ export function AdminImageActions({
 
       // V8.5: si una de varias cargas falla, las que sí subieron se asignan igualmente.
       // Antes quedaban en Multimedia pero no se agregaban al producto.
-      if (uploaded.length) {
-        onUploadedMany?.(uploaded);
+      const uniqueUploaded = Array.from(new Map(uploaded.map(item => [item.url, item])).values());
+      if (uniqueUploaded.length) {
+        if (multiple) {
+          if (onUploadedMany) onUploadedMany(uniqueUploaded);
+          else uniqueUploaded.forEach(media => onUploaded?.(media));
+        } else {
+          onUploaded?.(uniqueUploaded[0]);
+          onUploadedMany?.(uniqueUploaded);
+        }
         qc.invalidateQueries({ queryKey: ['admin-media'] });
         qc.invalidateQueries({ queryKey: ['admin-media-picker'] });
-        toast.success(uploaded.length > 1 ? `${uploaded.length} imágenes cargadas y asignadas.` : 'Imagen cargada y asignada.');
+        toast.success(uniqueUploaded.length > 1 ? `${uniqueUploaded.length} imágenes cargadas y asignadas.` : 'Imagen cargada y asignada.');
       }
       if (failures.length) {
         toast.error(`${failures.length} archivo${failures.length === 1 ? '' : 's'} no se pudo subir. Las imágenes correctas se conservaron.`);
