@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import type { BrandId, Product } from '@/lib/types';
 import { apiGet } from '@/lib/api';
 import { Header } from '@/components/storefront/Header';
-import { Hero } from '@/components/storefront/Hero';
 import { CategoryShowcase } from '@/components/storefront/CategoryShowcase';
 import { FeaturedCarousel } from '@/components/storefront/FeaturedCarousel';
 import { EditorialFeature } from '@/components/storefront/EditorialFeature';
@@ -20,7 +19,6 @@ export function BrandHome({ brand }: { brand: BrandId }) {
     <StoreBackdrop brand={brand} />
     <div className="storefront-content">
       <Header brand={brand} />
-      <Hero brand={brand} />
       <EditorialBannerCarousel brand={brand} />
       <div className="home-clean-flow">
         <FeaturedCarousel brand={brand} products={featured.data || []} loading={featured.isLoading} />
