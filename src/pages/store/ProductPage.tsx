@@ -242,7 +242,7 @@ export function ProductPage() {
           initial={reduceMotion ? false : { opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: reduceMotion ? 0 : .38, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-30 border-t border-black/[.07] bg-[#fbf8f1]/94 px-4 py-7 sm:px-6 lg:absolute lg:inset-y-0 lg:right-0 lg:flex lg:w-[405px] lg:flex-col lg:justify-center lg:overflow-y-auto lg:border-l lg:border-t-0 lg:border-white/45 lg:bg-[#fbf8f1]/86 lg:px-7 lg:py-8 lg:backdrop-blur-md xl:w-[430px] xl:px-8"
+          className="relative z-30 border-t border-black/[.07] bg-[#fbf8f1]/94 px-4 py-7 sm:px-6 lg:absolute lg:inset-y-0 lg:right-0 lg:block lg:w-[405px] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:border-white/45 lg:bg-[#fbf8f1]/86 lg:px-7 lg:py-8 lg:backdrop-blur-md xl:w-[430px] xl:px-8"
         >
           <div className="mx-auto w-full max-w-[560px] lg:mx-0">
             <div className="flex flex-wrap items-center gap-2">
