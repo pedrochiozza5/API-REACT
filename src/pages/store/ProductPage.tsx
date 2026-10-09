@@ -141,11 +141,11 @@ export function ProductPage() {
         >
           <div className="mx-auto w-full max-w-[560px] lg:mx-0 lg:max-w-[520px]">
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 font-mono-ui text-[8px] font-semibold uppercase tracking-[.18em] text-black/42">
+              <div className="inline-flex items-center gap-2 font-mono-ui text-[10px] font-semibold uppercase tracking-[.18em] text-black/42">
                 <BrandGlyph kind={yerbados ? 'yerba' : 'mate'} className="h-4 w-4" />
                 {yerbados ? 'Bien Yerbados' : 'Bien Amargos'} · {product.categoryName || 'Selección'}
               </div>
-              {hasDiscount && <span className="rounded-full bg-[#a9472c] px-2.5 py-1 text-[8px] font-black text-white">-{discount}%</span>}
+              {hasDiscount && <span className="rounded-full bg-[#a9472c] px-2.5 py-1 text-[10px] font-black text-white">-{discount}%</span>}
             </div>
 
             <h1 className="mt-3 max-w-[13ch] text-[clamp(2.35rem,9vw,3.6rem)] font-black leading-[.92] tracking-[-.06em] text-[#172119] lg:text-[clamp(2.5rem,3.2vw,3.7rem)]">{product.name}</h1>
@@ -163,23 +163,23 @@ export function ProductPage() {
               </AnimatePresence>
               {hasDiscount && <div className="text-sm font-bold text-black/32 line-through">{money(compare)}</div>}
             </div>
-            {hasDiscount && <div className="mt-1 text-[9px] font-black uppercase tracking-[.1em] text-[#a9472c]">Ahorrás {money(compare - price)}</div>}
+            {hasDiscount && <div className="mt-1 text-[11px] font-black uppercase tracking-[.1em] text-[#a9472c]">Ahorrás {money(compare - price)}</div>}
 
             {product.shortDescription && <p className="mt-4 max-w-[46ch] text-[13px] font-semibold leading-[1.65] text-black/54">{product.shortDescription}</p>}
 
             <div className="mt-4 flex flex-wrap items-center gap-2 border-y border-black/[.07] py-3">
-              <span className={`inline-flex items-center gap-1.5 text-[9px] font-black ${soldOut ? 'text-red-600' : selected && stock <= 3 ? 'text-amber-700' : 'text-emerald-700'}`}>
+              <span className={`inline-flex items-center gap-1.5 text-[11px] font-black ${soldOut ? 'text-red-600' : selected && stock <= 3 ? 'text-amber-700' : 'text-emerald-700'}`}>
                 <span className={`h-1.5 w-1.5 rounded-full ${soldOut ? 'bg-red-500' : selected && stock <= 3 ? 'bg-amber-500' : 'bg-emerald-600'}`} />
                 {soldOut ? 'Agotado' : !trackStock ? 'Disponible' : selected && stock <= 3 ? `Últimas ${stock}` : 'Disponible'}
               </span>
               <span className="h-1 w-1 rounded-full bg-black/15" />
-              <span className="font-mono-ui text-[7px] uppercase tracking-[.12em] text-black/28">SKU {selected?.sku || product.sku}</span>
+              <span className="font-mono-ui text-[10px] uppercase tracking-[.12em] text-black/28">SKU {selected?.sku || product.sku}</span>
             </div>
 
             {variants.length > 0 && <div className="mt-5">
               <div>
                 <div className="text-[11px] font-black">Elegí {variants[0]?.name?.toLowerCase() || 'variante'}</div>
-                <div className="mt-1 text-[9px] font-semibold text-black/36">{selected ? selected.value : 'Seleccioná una opción'}</div>
+                <div className="mt-1 text-[11px] font-semibold text-black/36">{selected ? selected.value : 'Seleccioná una opción'}</div>
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {variants.map(variant => {
@@ -199,7 +199,7 @@ export function ProductPage() {
                     </span>
                     <span className="min-w-0">
                       <span className="block truncate text-[10px] font-extrabold">{variant.value}</span>
-                      <span className={`block text-[7px] font-semibold ${active ? 'text-white/60' : 'text-black/35'}`}>{out ? 'Agotado' : 'Disponible'}</span>
+                      <span className={`block text-[10px] font-semibold ${active ? 'text-white/60' : 'text-black/35'}`}>{out ? 'Agotado' : 'Disponible'}</span>
                     </span>
                   </motion.button>;
                 })}
