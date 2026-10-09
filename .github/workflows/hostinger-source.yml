@@ -3,7 +3,7 @@ name: Hostinger source package
 on:
   push:
     branches:
-      - v9.1-source
+      - v9.2-source
   workflow_dispatch:
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
       - name: Upload Hostinger-ready ZIP
         uses: actions/upload-artifact@v4
         with:
-          name: bienamargos-v9.1-HOSTINGER-SOURCE
+          name: bienamargos-v9.2-HOSTINGER-SOURCE
           path: hostinger-source/**
           if-no-files-found: error
           compression-level: 6
