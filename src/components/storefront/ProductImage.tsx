@@ -51,10 +51,12 @@ export function ProductImage({
   );
   const [candidateIndex, setCandidateIndex] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     setCandidateIndex(0);
     setFailed(false);
+    setLoaded(false);
   }, [src, fallbackSrc]);
 
   const current = candidates[candidateIndex] || null;
@@ -65,6 +67,7 @@ export function ProductImage({
 
   function fail() {
     if (candidateIndex + 1 < candidates.length) {
+      setLoaded(false);
       setCandidateIndex((index) => index + 1);
       return;
     }
@@ -95,8 +98,8 @@ export function ProductImage({
         fetchPriority={fetchPriority}
         decoding={decoding}
         onError={fail}
-        onLoad={() => onLoaded?.(current)}
-        className={cn('absolute inset-0 h-full w-full select-none object-contain transition-[transform,opacity] duration-300 ease-out', imageClassName)}
+        onLoad={() => { setLoaded(true); onLoaded?.(current); }}
+        className={cn('absolute inset-0 h-full w-full select-none object-contain transition-[transform,opacity] duration-200 ease-out', loaded ? 'opacity-100' : 'opacity-0', imageClassName)}
         style={{
           objectPosition: `${safeX}% ${safeY}%`,
           transform: `scale(${safeZoom})`,
