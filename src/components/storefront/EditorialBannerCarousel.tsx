@@ -140,7 +140,7 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
                   transition={{ duration: reduceMotion ? 0 : .38, ease: [0.22, 1, 0.36, 1] }}
                   className="max-w-[700px] text-white"
                 >
-                  {slide.eyebrow && <div className="font-mono-ui text-[8px] font-semibold uppercase tracking-[.24em] text-white/64 sm:text-[9px]">{slide.eyebrow}</div>}
+                  {slide.eyebrow && <div className="font-mono-ui text-[10px] font-semibold uppercase tracking-[.24em] text-white/64 sm:text-[11px]">{slide.eyebrow}</div>}
                   <h2 className="mt-2 max-w-[720px] text-[clamp(2.4rem,5.2vw,5.8rem)] font-black leading-[.9] tracking-[-.06em]">{slide.title}</h2>
                   {slide.subtitle && <p className="mt-3 max-w-xl text-[13px] font-semibold leading-relaxed text-white/78 sm:text-[15px]">{slide.subtitle}</p>}
                   {slide.ctaLabel && slide.href && <Link
