@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import type { Product, ProductVariant } from '@/lib/types';
 import { money } from '@/lib/format';
 import { legacyProductImage } from '@/lib/productImages';
@@ -9,9 +9,11 @@ import { useCart } from '@/store/cart';
 import { toast } from 'sonner';
 import { QuickVariantSelector } from './QuickVariantSelector';
 import { ProductImage } from './ProductImage';
+import { apiGet } from '@/lib/api';
 
 export function ProductCard({ product }: { product: Product }) {
   const add = useCart((s) => s.add);
+  const queryClient = useQueryClient();
   const variants = useMemo(
     () => (product.variants || []).filter((v) => Boolean(v.active)).sort((a, b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0)),
     [product.variants],
@@ -52,6 +54,14 @@ export function ProductCard({ product }: { product: Product }) {
   const positionY = Number(preview?.imagePositionY ?? product.imagePositionY ?? 50);
   const blendMode = preview?.imageBlendMode ?? product.imageBlendMode ?? 'normal';
 
+  function prefetchDetail() {
+    queryClient.prefetchQuery({
+      queryKey: ['product', product.slug],
+      queryFn: () => apiGet<Product>(`/api/products/${encodeURIComponent(product.slug)}`),
+      staleTime: 2 * 60_000,
+    });
+  }
+
   function quick() {
     if (sold) return;
     if (variants.length === 0) {
@@ -71,7 +81,7 @@ export function ProductCard({ product }: { product: Product }) {
   }
 
   return <>
-    <motion.article layout whileHover={{ y: -2 }} transition={{ type: 'spring', stiffness: 320, damping: 27 }} className="product-card-v5 group min-w-0 overflow-hidden">
+    <article onMouseEnter={prefetchDetail} onFocus={prefetchDetail} className="product-card-v5 group min-w-0 overflow-hidden">
       <Link to={`/producto/${product.slug}`} className="block">
         <div className="relative aspect-square overflow-hidden bg-[#f5f2ea]">
           <ProductImage
@@ -124,7 +134,7 @@ export function ProductCard({ product }: { product: Product }) {
           </div>}
         </div>
       </div>
-    </motion.article>
+    </article>
     {variants.length > 1 && <QuickVariantSelector product={product} open={picker} onOpenChange={setPicker}/>}
   </>;
 }
