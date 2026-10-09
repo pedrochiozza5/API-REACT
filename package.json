@@ -16,7 +16,8 @@
     "setup:production": "npm run db:init",
     "setup:demo": "npm run db:init && npm run db:seed",
     "test": "tsx --test tests/*.test.ts",
-    "typecheck:web": "tsc -p tsconfig.json --noEmit"
+    "typecheck:web": "tsc -p tsconfig.json --noEmit",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
@@ -57,7 +58,8 @@
     "@types/leaflet": "^1.9.15"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "@playwright/test": "^1.56.0"
   },
   "engines": {
     "node": ">=22.0.0"
