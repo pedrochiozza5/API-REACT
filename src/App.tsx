@@ -37,14 +37,25 @@ function GlobalOverlays(){
   const [cartLoaded,setCartLoaded]=useState(false);
   const [showAssist,setShowAssist]=useState(false);
   useEffect(()=>{if(cartOpen)setCartLoaded(true);},[cartOpen]);
+
   useEffect(()=>{
     if(pathname.startsWith('/admin')) return;
     const w=window as typeof window & { requestIdleCallback?: (cb:()=>void, options?:{timeout:number})=>number; cancelIdleCallback?: (id:number)=>void };
     let timer:number|undefined;
     let idle:number|undefined;
-    if(w.requestIdleCallback) idle=w.requestIdleCallback(()=>setShowAssist(true),{timeout:2200});
-    else timer=window.setTimeout(()=>setShowAssist(true),1600);
-    return ()=>{if(timer)window.clearTimeout(timer);if(idle&&w.cancelIdleCallback)w.cancelIdleCallback(idle);};
+    if(w.requestIdleCallback) idle=w.requestIdleCallback(()=>setCartLoaded(true),{timeout:1200});
+    else timer=window.setTimeout(()=>setCartLoaded(true),900);
+    return ()=>{if(timer!==undefined)window.clearTimeout(timer);if(idle!==undefined&&w.cancelIdleCallback)w.cancelIdleCallback(idle);};
+  },[pathname]);
+
+  useEffect(()=>{
+    if(pathname.startsWith('/admin')) return;
+    const w=window as typeof window & { requestIdleCallback?: (cb:()=>void, options?:{timeout:number})=>number; cancelIdleCallback?: (id:number)=>void };
+    let timer:number|undefined;
+    let idle:number|undefined;
+    if(w.requestIdleCallback) idle=w.requestIdleCallback(()=>setShowAssist(true),{timeout:2600});
+    else timer=window.setTimeout(()=>setShowAssist(true),1900);
+    return ()=>{if(timer!==undefined)window.clearTimeout(timer);if(idle!==undefined&&w.cancelIdleCallback)w.cancelIdleCallback(idle);};
   },[pathname]);
   if(pathname.startsWith('/admin'))return null;
   return <>{cartLoaded&&<Suspense fallback={null}><CartDrawer/></Suspense>}{showAssist&&<Suspense fallback={null}><CanaBot/></Suspense>}</>;
