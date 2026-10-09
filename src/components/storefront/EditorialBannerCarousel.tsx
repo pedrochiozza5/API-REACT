@@ -34,7 +34,7 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
   const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState(false);
   const timer = useRef<number | null>(null);
-  const q = useQuery({ queryKey: ['home-banners', brand], queryFn: () => apiGet<Banner[]>(`/api/banners?brand=${brand}`), staleTime: 60_000 });
+  const q = useQuery({ queryKey: ['home-banners', brand], queryFn: ({signal}) => apiGet<Banner[]>(`/api/banners?brand=${brand}`, signal), staleTime: 60_000 });
   const slides = useMemo(() => q.data?.length ? q.data : fallback, [q.data]);
 
   const sync = useCallback(() => {
