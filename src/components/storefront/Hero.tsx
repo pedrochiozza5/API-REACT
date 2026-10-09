@@ -30,7 +30,7 @@ export function Hero({brand}:{brand:BrandId}) {
   const copy=defaults[brand];
   const settings=useQuery({
     queryKey:['store-settings'],
-    queryFn:()=>apiGet<StoreSettings>('/api/store-settings'),
+    queryFn:({signal})=>apiGet<StoreSettings>('/api/store-settings',signal),
     staleTime:5*60_000,
   });
   const title=settings.data?.settings?.[en?'hero_enyerbados':'hero_amargos']||copy.title;
