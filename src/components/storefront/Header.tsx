@@ -17,7 +17,7 @@ export function Header({ brand, solid = false, hideMobileDock = false }: { brand
   const deferredTerm=useDeferredValue(term.trim());
   const products=useQuery({
     queryKey:['store-search-products',brand,deferredTerm],
-    queryFn:()=>apiGet<Product[]>(`/api/products?brand=${brand}&q=${encodeURIComponent(deferredTerm)}&limit=8`),
+    queryFn:({signal})=>apiGet<Product[]>(`/api/products?brand=${brand}&q=${encodeURIComponent(deferredTerm)}&limit=8`,signal),
     enabled:searchOpen&&deferredTerm.length>=2,
     staleTime:5*60_000,
   });
