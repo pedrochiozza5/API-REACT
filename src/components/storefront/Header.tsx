@@ -10,13 +10,10 @@ import { apiGet } from '@/lib/api';
 import { money } from '@/lib/format';
 import { ProductImage } from './ProductImage';
 
-type StoreSettings={settings:Record<string,string>;brands:{id:string;whatsapp?:string|null;instagram?:string|null;email?:string|null}[]};
-
 export function Header({ brand, solid = false, hideMobileDock = false }: { brand: BrandId; solid?: boolean; hideMobileDock?: boolean }) {
   const [mobileOpen,setMobileOpen]=useState(false); const[scrolled,setScrolled]=useState(false); const[searchOpen,setSearchOpen]=useState(false); const[term,setTerm]=useState(''); const[dockCompact,setDockCompact]=useState(false);
   const navigate=useNavigate(); const location=useLocation(); const reduceMotion=useReducedMotion(); const lastY=useRef(0);
   const items=useCart(s=>s.items); const setCartOpen=useCart(s=>s.setOpen); const count=items.reduce((sum,item)=>sum+item.qty,0); const en=brand==='enyerbados';
-  const settings=useQuery({queryKey:['store-settings'],queryFn:()=>apiGet<StoreSettings>('/api/store-settings'),staleTime:5*60_000});
   const deferredTerm=useDeferredValue(term.trim());
   const products=useQuery({
     queryKey:['store-search-products',brand,deferredTerm],
