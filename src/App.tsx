@@ -1,11 +1,10 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { SmoothScroll } from '@/components/storefront/SmoothScroll';
 import { ScrollToTop } from '@/components/storefront/ScrollToTop';
 import { CartDrawer } from '@/components/storefront/CartDrawer';
-import { CanaBot } from '@/components/storefront/CanaBot';
 import { RouteTitle } from '@/components/storefront/RouteTitle';
 
+const CanaBot = lazy(() => import('@/components/storefront/CanaBot').then((m) => ({ default: m.CanaBot })));
 const BrandHome = lazy(() => import('@/pages/store/BrandHome').then((m) => ({ default: m.BrandHome })));
 const CatalogPage = lazy(() => import('@/pages/store/CatalogPage').then((m) => ({ default: m.CatalogPage })));
 const ProductPage = lazy(() => import('@/pages/store/ProductPage').then((m) => ({ default: m.ProductPage })));
@@ -31,11 +30,25 @@ const NotFoundPage = lazy(() => import('@/pages/store/NotFoundPage').then((m) =>
 
 function Loading() { return <div className="grid min-h-screen place-items-center bg-[#f2efe7]"><div className="font-mono-ui text-[9px] uppercase tracking-[.22em] text-black/38">Cargando…</div></div>; }
 
-function GlobalOverlays(){const {pathname}=useLocation();if(pathname.startsWith('/admin'))return null;return <><CartDrawer/><CanaBot/></>}
+function GlobalOverlays(){
+  const {pathname}=useLocation();
+  const [showAssist,setShowAssist]=useState(false);
+  useEffect(()=>{
+    if(pathname.startsWith('/admin')) return;
+    const w=window as typeof window & { requestIdleCallback?: (cb:()=>void, options?:{timeout:number})=>number; cancelIdleCallback?: (id:number)=>void };
+    let timer:number|undefined;
+    let idle:number|undefined;
+    if(w.requestIdleCallback) idle=w.requestIdleCallback(()=>setShowAssist(true),{timeout:2200});
+    else timer=window.setTimeout(()=>setShowAssist(true),1600);
+    return ()=>{if(timer)window.clearTimeout(timer);if(idle&&w.cancelIdleCallback)w.cancelIdleCallback(idle);};
+  },[pathname]);
+  if(pathname.startsWith('/admin'))return null;
+  return <><CartDrawer/>{showAssist&&<Suspense fallback={null}><CanaBot/></Suspense>}</>;
+}
 
 export default function App() {
   return <>
-    <SmoothScroll/><ScrollToTop/><RouteTitle/>
+    <ScrollToTop/><RouteTitle/>
     <Suspense fallback={<Loading/>}><Routes>
       <Route path="/" element={<BrandHome brand="amargos"/>}/>
       <Route path="/yerbados" element={<BrandHome brand="enyerbados"/>}/>
