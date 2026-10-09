@@ -1,9 +1,21 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { motion } from 'motion/react';
+import { ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import type { ProductImage as ProductImageType } from '@/lib/types';
 import { ProductImage } from './ProductImage';
+
+type Props = {
+  images: ProductImageType[];
+  fallback?: string | null;
+  recoveryFallback?: string | null;
+  name: string;
+  categoryName?: string | null;
+  zoom?: number | null;
+  positionX?: number | null;
+  positionY?: number | null;
+  blendMode?: string | null;
+};
 
 export function ProductGallery({
   images,
@@ -15,148 +27,163 @@ export function ProductGallery({
   positionX = 50,
   positionY = 50,
   blendMode = 'normal',
-}: {
-  images: ProductImageType[];
-  fallback?: string | null;
-  recoveryFallback?: string | null;
-  name: string;
-  categoryName?: string | null;
-  zoom?: number | null;
-  positionX?: number | null;
-  positionY?: number | null;
-  blendMode?: string | null;
-}) {
-  const normalized = useMemo(() => {
-    const urls = [fallback, ...images.map((image) => image.imageUrl)]
-      .map((value) => value?.trim())
-      .filter((value): value is string => Boolean(value));
-    return Array.from(new Set(urls));
-  }, [images, fallback]);
+}: Props) {
+  const reduceMotion = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const urls = useMemo(
+    () => Array.from(new Set(
+      [fallback, ...(images || []).map(image => image.imageUrl)]
+        .map(value => String(value || '').trim())
+        .filter(Boolean),
+    )),
+    [fallback, images],
+  );
+  const [failed, setFailed] = useState<Set<string>>(new Set());
+  const slides = useMemo(() => urls.filter(url => !failed.has(url)), [urls, failed]);
+  const [viewportRef, api] = useEmblaCarousel({
+    loop: slides.length > 1,
+    align: 'start',
+    containScroll: false,
+    watchDrag: slides.length > 1,
+  });
+  const [selected, setSelected] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
 
-  // Mantener contain: la foto completa siempre. El ancho lo da el viewport, no un crop.
-  const galleryZoom = Math.min(Math.max(Number(zoom) || 1, 0.8), 1.03);
-  const [invalid, setInvalid] = useState<Set<string>>(() => new Set());
-  const valid = useMemo(() => normalized.filter((url) => !invalid.has(url)), [normalized, invalid]);
-  const [emblaRef, api] = useEmblaCarousel({ loop: valid.length > 1, align: 'start', skipSnaps: false });
-  const [index, setIndex] = useState(0);
-  const onSelect = useCallback(() => setIndex(api?.selectedScrollSnap() || 0), [api]);
-
-  useEffect(() => setInvalid(new Set()), [normalized.join('|')]);
+  const sync = useCallback(() => {
+    if (!api) return;
+    setSelected(api.selectedScrollSnap());
+  }, [api]);
 
   useEffect(() => {
     if (!api) return;
-    onSelect();
-    api.on('select', onSelect);
-    api.on('reInit', onSelect);
+    sync();
+    api.on('select', sync);
+    api.on('reInit', sync);
     return () => {
-      api.off('select', onSelect);
-      api.off('reInit', onSelect);
+      api.off('select', sync);
+      api.off('reInit', sync);
     };
-  }, [api, onSelect]);
+  }, [api, sync]);
+
+  useEffect(() => {
+    setFailed(new Set());
+    setSelected(0);
+  }, [urls.join('|')]);
 
   useEffect(() => {
     if (!api) return;
-    api.reInit({ loop: valid.length > 1, align: 'start', skipSnaps: false });
+    api.reInit({
+      loop: slides.length > 1,
+      align: 'start',
+      containScroll: false,
+      watchDrag: slides.length > 1,
+    });
     api.scrollTo(0, true);
-    setIndex(0);
-  }, [api, valid.length, normalized.join('|')]);
+    setSelected(0);
+  }, [api, slides.length, slides.join('|')]);
 
-  function markInvalid(src: string) {
-    setInvalid((current) => {
+  // Decode only the next image, not the entire gallery.
+  useEffect(() => {
+    if (slides.length < 2) return;
+    const next = slides[(selected + 1) % slides.length];
+    if (!next) return;
+    const image = new Image();
+    image.decoding = 'async';
+    image.src = next;
+  }, [selected, slides]);
+
+  const markFailed = useCallback((url:string) => {
+    setFailed(current => {
+      if (current.has(url)) return current;
       const next = new Set(current);
-      next.add(src);
+      next.add(url);
       return next;
     });
+  }, []);
+
+  const current = slides[selected] || slides[0] || recoveryFallback || null;
+  const visibleSlides = slides.length ? slides : [recoveryFallback].filter(Boolean) as string[];
+  const safeZoom = Math.min(Math.max(Number(zoom) || 1, .86), 1.06);
+
+  function onKeyDown(event:React.KeyboardEvent<HTMLDivElement>) {
+    if (!api || slides.length < 2) return;
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      api.scrollPrev();
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      api.scrollNext();
+    }
   }
 
-  if (!valid.length) {
-    return (
-      <div className="product-gallery-v85 w-full min-w-0 overflow-hidden bg-[#f3efe6]">
-        <div className="aspect-square sm:aspect-[5/4] lg:aspect-[4/3]">
-          <ProductImage
-            src={recoveryFallback}
-            alt={name}
-            categoryName={categoryName}
-            zoom={1}
-            onInvalid={markInvalid}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="product-gallery-v85 w-full min-w-0">
-      <div className="group/gallery product-gallery-stage-v85 relative w-full bg-[#f3efe6]">
-        <div ref={emblaRef} className="product-gallery-viewport-v85">
-          <div className="product-gallery-track-v85">
-            {valid.map((src, imageIndex) => (
-              <div key={src} className="product-gallery-slide-v85">
-                <div className="product-gallery-frame-v85">
-                  <motion.div
-                    key={src}
-                    initial={{ opacity: .45 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: .24 }}
-                    className="h-full w-full"
-                  >
-                    <ProductImage
-                      src={src}
-                      fallbackSrc={imageIndex === 0 ? recoveryFallback : null}
-                      alt={imageIndex === 0 ? name : `${name} · foto ${imageIndex + 1}`}
-                      categoryName={categoryName}
-                      zoom={galleryZoom}
-                      positionX={positionX}
-                      positionY={positionY}
-                      blendMode={blendMode}
-                      onInvalid={markInvalid}
-                      loading={imageIndex === 0 ? 'eager' : 'lazy'}
-                      fetchPriority={imageIndex === 0 ? 'high' : 'low'}
-                    />
-                  </motion.div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {valid.length > 1 && (
-          <>
-            <div className="pointer-events-none absolute inset-x-0 bottom-3 z-10 flex justify-center gap-1.5 sm:hidden">
-              {valid.map((src, dotIndex) => (
-                <button
-                  key={src}
-                  type="button"
-                  onClick={() => api?.scrollTo(dotIndex)}
-                  className={`pointer-events-auto h-1.5 rounded-full transition-all ${dotIndex === index ? 'w-6 bg-[#172119]' : 'w-1.5 bg-[#172119]/25'}`}
-                  aria-label={`Ir a foto ${dotIndex + 1}`}
-                />
-              ))}
-            </div>
-
-            <div className="pointer-events-none absolute inset-x-4 top-1/2 z-10 hidden -translate-y-1/2 items-center justify-between sm:flex">
-              <button type="button" onClick={() => api?.scrollPrev()} className="store-icon-button pointer-events-auto opacity-0 transition group-hover/gallery:opacity-100 focus:opacity-100" aria-label="Foto anterior"><ArrowLeft size={17}/></button>
-              <button type="button" onClick={() => api?.scrollNext()} className="store-icon-button pointer-events-auto opacity-0 transition group-hover/gallery:opacity-100 focus:opacity-100" aria-label="Foto siguiente"><ArrowRight size={17}/></button>
-            </div>
-          </>
-        )}
-      </div>
-
-      {valid.length > 1 && (
-        <div className="hide-scrollbar mt-3 flex gap-2 overflow-x-auto px-3 pb-1 sm:px-0">
-          {valid.map((src, thumbIndex) => (
-            <button
-              key={src}
-              type="button"
-              onClick={() => api?.scrollTo(thumbIndex)}
-              className={`h-16 w-16 shrink-0 overflow-hidden rounded-[12px] border bg-[#f5f2ea] transition sm:h-[72px] sm:w-[72px] ${thumbIndex === index ? 'border-[#173b2d] bg-white' : 'border-black/[.07] hover:border-black/20'}`}
-              aria-label={`Imagen ${thumbIndex + 1}`}
+  return <>
+    <div
+      ref={rootRef}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      className="group/gallery relative h-[64svh] min-h-[420px] w-screen overflow-hidden bg-[#ece7dd] outline-none sm:h-[72svh] lg:h-[calc(100svh-96px)] lg:min-h-[650px]"
+      aria-label={`Galería de ${name}`}
+    >
+      <div ref={viewportRef} className="h-full w-full overflow-hidden">
+        <div className="flex h-full w-full touch-pan-y">
+          {visibleSlides.map((src,index) => <div key={src} className="relative h-full min-w-0 flex-[0_0_100%] bg-[radial-gradient(circle_at_46%_42%,#f8f4eb_0%,#ece7dd_58%,#e0d9cd_100%)]">
+            <motion.div
+              initial={reduceMotion ? false : { opacity: .45, scale: .995 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: reduceMotion ? 0 : .24 }}
+              className="absolute inset-0 px-1 pb-16 pt-3 sm:px-8 sm:pb-20 sm:pt-6 lg:px-[7vw] lg:pb-24 lg:pt-8"
             >
-              <ProductImage src={src} alt="" zoom={galleryZoom} positionX={positionX} positionY={positionY} blendMode={blendMode} empty="none" onInvalid={markInvalid} loading="lazy" fetchPriority="low"/>
-            </button>
-          ))}
+              <ProductImage
+                src={src}
+                alt={index === 0 ? name : `${name} · foto ${index + 1}`}
+                categoryName={categoryName}
+                zoom={safeZoom}
+                positionX={positionX}
+                positionY={positionY}
+                blendMode={blendMode}
+                onInvalid={() => markFailed(src)}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'low'}
+                className="bg-transparent"
+                imageClassName="object-contain"
+              />
+            </motion.div>
+          </div>)}
         </div>
-      )}
+      </div>
+
+      {slides.length > 1 && <>
+        <button type="button" onClick={()=>api?.scrollPrev()} aria-label="Imagen anterior" className="absolute left-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] backdrop-blur-xl transition hover:bg-white sm:left-5 lg:h-12 lg:w-12"><ChevronLeft size={20}/></button>
+        <button type="button" onClick={()=>api?.scrollNext()} aria-label="Imagen siguiente" className="absolute right-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] backdrop-blur-xl transition hover:bg-white sm:right-5 lg:h-12 lg:w-12"><ChevronRight size={20}/></button>
+
+        <div className="absolute bottom-3 left-1/2 z-20 flex max-w-[70vw] -translate-x-1/2 gap-2 overflow-x-auto rounded-2xl border border-black/8 bg-[#fbf8f1]/88 p-2 backdrop-blur-xl sm:bottom-5">
+          {slides.map((src,index) => <button
+            type="button"
+            key={src}
+            onClick={()=>api?.scrollTo(index)}
+            aria-label={`Ver imagen ${index+1}`}
+            className={`h-11 w-11 shrink-0 overflow-hidden rounded-xl border p-1 transition sm:h-14 sm:w-14 ${selected===index?'border-[#174a36] bg-white opacity-100':'border-transparent bg-white/60 opacity-55 hover:opacity-100'}`}
+          ><ProductImage src={src} alt="" empty="none" loading="lazy" fetchPriority="low" onInvalid={()=>markFailed(src)} /></button>)}
+        </div>
+
+        <div className="absolute bottom-4 left-3 z-20 rounded-full border border-black/8 bg-[#fbf8f1]/90 px-3 py-2 font-mono-ui text-[8px] font-black tracking-[.12em] text-[#173429] backdrop-blur-xl sm:left-5">{selected+1} / {slides.length}</div>
+      </>}
+
+      {current && <button type="button" onClick={()=>setLightbox(true)} className="absolute bottom-4 right-3 z-20 flex h-10 items-center gap-2 rounded-full border border-black/8 bg-[#fbf8f1]/90 px-3 text-[9px] font-black text-[#173429] backdrop-blur-xl transition hover:bg-white sm:right-5"><Maximize2 size={14}/><span className="hidden sm:inline">Ampliar</span></button>}
     </div>
-  );
+
+    <AnimatePresence>{lightbox && current && <motion.div
+      initial={{opacity:0}}
+      animate={{opacity:1}}
+      exit={{opacity:0}}
+      className="fixed inset-0 z-[500] grid place-items-center bg-[#090d0a]/95 p-3 sm:p-6"
+      onClick={()=>setLightbox(false)}
+    >
+      <button type="button" onClick={()=>setLightbox(false)} aria-label="Cerrar imagen ampliada" className="fixed right-4 top-4 z-[501] grid h-11 w-11 place-items-center rounded-full bg-white text-[#172119]"><X size={20}/></button>
+      <div className="h-[88svh] w-[94vw] max-w-[1500px] overflow-hidden rounded-[18px] bg-[#f0ece3] p-2 sm:rounded-[26px] sm:p-6" onClick={event=>event.stopPropagation()}>
+        <ProductImage src={current} alt={name} zoom={1} positionX={50} positionY={50} blendMode="normal" />
+      </div>
+    </motion.div>}</AnimatePresence>
+  </>;
 }
