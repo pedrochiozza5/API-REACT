@@ -23,7 +23,7 @@ export function ProductPage() {
 
   const { data: product, isLoading, error } = useQuery({
     queryKey: ['product', slug],
-    queryFn: () => apiGet<Product>(`/api/products/${encodeURIComponent(slug)}`),
+    queryFn: ({signal}) => apiGet<Product>(`/api/products/${encodeURIComponent(slug)}`, signal),
     staleTime: 2 * 60_000,
   });
 
