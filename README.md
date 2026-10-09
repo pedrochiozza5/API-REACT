@@ -1,3 +1,21 @@
+# Bien Amargos + Bien Yerbados — V9.2
+
+V9.2 corrige el rumbo visual de Home y ProductPage con un criterio más cercano a ecommerce de marca real: fotografía donde corresponde, superficies limpias donde corresponde y jerarquía comercial clara.
+
+## Cambios centrales
+
+- **Carrusel Home edge-to-edge:** sin card exterior, sin max-width, sin radius grande y sin márgenes laterales. La imagen toca ambos bordes del viewport, con flechas laterales y dots inferiores, siguiendo el patrón de banners editoriales de ecommerce.
+- **Hero reequilibrado:** título menos desbordado y proporciones más controladas.
+- **Fondo global:** se eliminó la fotografía fija repetida detrás de todas las secciones. Las imágenes vuelven a vivir en Hero/Banners; el resto usa una atmósfera crema/arena coherente.
+- **ProductPage:** layout ecommerce desktop real: galería amplia a la izquierda e información sticky a la derecha. Ya no es una card flotando encima de la foto.
+- **ProductGallery:** media column limpia, producto centrado, thumbnails y controles claros.
+- **Mobile:** mantiene galería grande + detalle debajo + sticky buy bar.
+- **No cambios destructivos:** productos, imágenes, variantes, stock, pedidos, clientes y mayoristas se conservan.
+
+Esta rama continúa siendo **source-only**.
+
+---
+
 # Bien Amargos + Bien Yerbados — V9.1
 
 V9.1 refina la V9 sin volver a una estrategia de parches. La prioridad es recuperar la atmósfera visual del Home en toda la tienda, mejorar profundamente la ProductPage desktop y hacer que el carrito se sienta más premium sin volver a cargar el runtime con efectos continuos.
