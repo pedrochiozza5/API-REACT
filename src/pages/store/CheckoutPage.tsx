@@ -73,7 +73,6 @@ export function CheckoutPage() {
               <h1 className="relative mx-auto mt-3 max-w-2xl text-4xl font-black leading-[.92] tracking-[-.06em] sm:text-6xl">La ronda quedó reservada.</h1>
               <p className="relative mx-auto mt-5 max-w-lg text-sm font-semibold leading-relaxed text-black/48">Falta una sola cosa: abrir WhatsApp y confirmar entrega y pago.</p>
               <motion.a whileHover={{ y: -3, scale: 1.01 }} whileTap={{ scale: .985 }} href={done.whatsappUrl} target="_blank" rel="noreferrer" className="checkout-whatsapp-cta group relative mx-auto mt-8 flex h-[62px] max-w-sm items-center justify-between overflow-hidden rounded-[22px] bg-[#25D366] px-5 text-[#092d19] shadow-[0_20px_50px_rgba(37,211,102,.28)]">
-                <motion.span aria-hidden className="pointer-events-none absolute inset-y-0 -left-[60%] w-[48%] skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/30 to-transparent" animate={{ x: ['0%', '360%'] }} transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1, ease: 'easeInOut' }} />
                 <span className="relative z-10 flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-full bg-[#092d19] text-white"><MessageCircle size={19} /></span><span className="text-left"><span className="block text-[9px] font-black uppercase tracking-[.13em] opacity-55">Último paso</span><span className="block text-sm font-black">Confirmar por WhatsApp</span></span></span>
                 <ArrowRight className="relative z-10 transition-transform group-hover:translate-x-1" size={19} />
               </motion.a>
@@ -139,7 +138,6 @@ export function CheckoutPage() {
                     whileTap={!loading ? { scale: .988 } : undefined}
                     className="checkout-final-cta group relative mt-6 hidden h-[66px] w-full items-center justify-between overflow-hidden rounded-[22px] bg-[#153f2f] px-5 text-white shadow-[0_18px_44px_rgba(13,57,38,.22)] disabled:cursor-wait sm:flex"
                   >
-                    {!loading && <motion.span aria-hidden className="pointer-events-none absolute inset-y-0 -left-[55%] w-[42%] skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/16 to-transparent" animate={{ x: ['0%', '380%'] }} transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 1.3, ease: 'easeInOut' }} />}
                     <span className="relative z-10 flex items-center gap-3">{loading ? <LoaderCircle className="animate-spin" size={20}/> : <ShieldCheck size={20}/>}<span className="text-left"><span className="block text-[9px] font-bold uppercase tracking-[.15em] text-white/48">{loading ? 'Reservando stock' : 'Todo listo'}</span><span className="block text-sm font-black">{loading ? 'Generando pedido…' : 'Finalizar pedido'}</span></span></span>
                     <span className="relative z-10 flex items-center gap-3"><span className="text-sm font-black">{money(total)}</span><span className="grid h-10 w-10 place-items-center rounded-full bg-white text-[#153f2f] transition-transform group-hover:translate-x-1"><ArrowRight size={18}/></span></span>
                   </motion.button>
@@ -180,7 +178,6 @@ export function CheckoutPage() {
             whileTap={!loading ? { scale: .985 } : undefined}
             className="checkout-mobile-final relative flex h-[68px] w-full items-center justify-between overflow-hidden rounded-[23px] border border-white/18 bg-[#153f2f] px-4 text-white shadow-[0_20px_60px_rgba(5,25,15,.32)] disabled:cursor-wait"
           >
-            {!loading && <motion.span aria-hidden className="pointer-events-none absolute inset-y-0 -left-[55%] w-[46%] skew-x-[-18deg] bg-gradient-to-r from-transparent via-white/17 to-transparent" animate={{ x: ['0%', '360%'] }} transition={{ duration: 2.7, repeat: Infinity, repeatDelay: 1.1, ease: 'easeInOut' }} />}
             <span className="relative z-10 flex items-center gap-3">{loading ? <LoaderCircle className="animate-spin" size={20}/> : <MessageCircle size={20}/>}<span className="text-left"><span className="block text-[8px] font-bold uppercase tracking-[.14em] text-white/48">{loading ? 'Un segundo' : `${count} ${count === 1 ? 'producto' : 'productos'}`}</span><span className="block text-sm font-black">{loading ? 'Reservando…' : 'Finalizar pedido'}</span></span></span>
             <span className="relative z-10 flex items-center gap-2"><span className="text-sm font-black">{money(total)}</span><span className="grid h-10 w-10 place-items-center rounded-full bg-white text-[#153f2f]"><ArrowRight size={18}/></span></span>
           </motion.button>
