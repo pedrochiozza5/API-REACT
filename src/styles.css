@@ -458,6 +458,10 @@ button:not(:disabled),[role="button"]:not(:disabled){cursor:pointer}
   .storefront-backdrop{background:linear-gradient(180deg,#f7f3e9 0%,#eee7db 58%,#e6dccd 100%)}
 }
 
+/* Editorial home carousel: crop choices are data-driven without runtime <style> tags. */
+.editorial-banner-image{object-position:var(--banner-position-desktop,50% 50%)}
+@media(max-width:639px){.editorial-banner-image{object-position:var(--banner-position-mobile,50% 50%)}}
+
 /* Buttons */
 .hero-primary-cta,.hero-secondary-cta{
   display:inline-flex;
