@@ -245,7 +245,7 @@ export const catalogRoutes: FastifyPluginAsync = async app => {
       params.push(term, term, term);
     }
 
-    const limit = Math.min(Math.max(Number(query.limit || 48), 1), 80);
+    const limit = Math.min(Math.max(Number(query.limit || 48), 1), 120);
 
     const [rows] = await pool.query<any[]>(
       `SELECT p.id, p.brand_id AS brandId, p.category_id AS categoryId, p.name, p.slug,
