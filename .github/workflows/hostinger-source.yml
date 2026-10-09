@@ -32,6 +32,22 @@ jobs:
       - name: Verify Hostinger build compatibility
         run: npm run build
 
+      - name: Install Chromium for browser smoke tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser QA — Home, carousel, mobile product
+        run: npm run test:e2e
+
+      - name: Upload visual QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bienamargos-v10-VISUAL-QA
+          path: |
+            test-results/*.png
+            test-results/**/*.zip
+          if-no-files-found: warn
+
       - name: Prepare clean source at ZIP root
         shell: bash
         run: |
@@ -43,6 +59,8 @@ jobs:
             --exclude 'node_modules/' \
             --exclude 'dist/' \
             --exclude 'dist-server/' \
+            --exclude 'test-results/' \
+            --exclude 'playwright-report/' \
             --exclude 'hostinger-source/' \
             --include '.env.example' \
             --exclude '.env' \
