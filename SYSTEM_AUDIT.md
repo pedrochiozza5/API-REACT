@@ -10,7 +10,7 @@
 | P0 — falso error tras guardar un pedido | `server/routes/orders.ts` consultaba la configuración WhatsApp después de `conn.commit()` | Configuración y URL se resuelven dentro de la transacción, antes del commit | Corregido en código |
 | P1 — dos protagonistas en Home | `BrandHome.tsx` montaba `Hero` y `EditorialBannerCarousel` consecutivamente | Un único carrusel editorial full-bleed, conservando titular editable de ambas marcas | Corregido en código |
 | P1 — diferencias de media en Card y ficha | Ambas tenían código propio de deduplicación/orden | `productMediaUrls()` compartido, cubierta principal única y variantes | Corregido + tests |
-| P1 — sin suite automatizada en V9.2 | No existían `*.test.*` / `*.spec.*` en el árbol base | Pruebas Node de media y formato de pedidos; ver `QA_REPORT.md` | Cobertura inicial, no completa |
+| P1 — sin suite automatizada en V9.2 | No existían `*.test.*` / `*.spec.*` en el árbol base | Pruebas Node de media/mensajes y smoke tests Playwright; ver `QA_REPORT.md` | Cobertura inicial, no completa |
 | P1 — errores TypeScript stock | `AdminStock.tsx` infiere el tipo de `flatMap` como variante no nula, pero hay productos sin variante | `flatMap<Row>` y modelo de filas tipado | Corregido en código |
 | P1 — paneles operativos monolíticos | `server/routes/admin.ts` ~66 KB, `AdminProductEditor.tsx` ~40 KB | Recomendada separación por dominios y contratos; no tocar sin pruebas E2E | Pendiente |
 | P2 — ProductPage acopla SEO y UI | `ProductPage.tsx` manejaba metadatos + selección + UI | SEO a `useProductSeo`, variantes a `ProductVariantSelector` | Corregido parcialmente |
