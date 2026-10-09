@@ -51,6 +51,8 @@ Hallazgos estructurales en V8.6.2:
 - Header dejó de consultar store-settings sin usarlos.
 - Header Search ya no descarga 120 productos:
   - espera al menos 2 caracteres;
+  - aplica debounce antes de consultar;
+  - cancela requests obsoletos;
   - envía la búsqueda al servidor;
   - limita la respuesta a 8.
 - Catálogo comienza con 48 productos y permite expansión progresiva.
@@ -59,9 +61,10 @@ Hallazgos estructurales en V8.6.2:
 ### React / JavaScript
 
 - Se eliminó Lenis y su loop permanente de RAF.
-- CartDrawer pasó a lazy chunk.
-- CanaBot pasó a lazy chunk y se carga en idle.
+- CartDrawer pasó a lazy chunk y se precalienta en idle, sin bloquear el primer render.
+- CanaBot pasó a lazy chunk y se carga después, también en idle.
 - ProductCard dejó de crear una animación Motion por card.
+- ProductCard eliminó el modal rápido de variantes: con múltiples opciones deriva al detalle precargado, reduciendo UI y código de card.
 - ProductCard prefetchéa el detalle sólo al hover/focus real del usuario.
 - GET públicos importantes reciben AbortSignal de React Query para cancelar respuestas que dejaron de ser necesarias.
 - React Query usa staleTime/gcTime más razonables y evita refetch automático por focus/reconnect.
@@ -69,6 +72,7 @@ Hallazgos estructurales en V8.6.2:
 ### Imágenes
 
 - El fondo global ya no descarga hero-beach en todas las rutas.
+- Se eliminaron los preloads globales de hero-beach del index.html: catálogo/producto/checkout ya no bajan esa imagen por adelantado.
 - Hero es el propietario de la imagen LCP y la marca como eager/high priority.
 - ProductPage no duplica la imagen para generar un fondo blur.
 - Primera foto del producto: eager/high priority.
@@ -91,6 +95,7 @@ Hallazgos estructurales en V8.6.2:
 
 ### CSS / UI
 
+- Se redujo la petición de Google Fonts a los pesos realmente necesarios y se usa font-display swap.
 - Se eliminaron los archivos CSS V8.6 fragmentados.
 - Se quitaron los bloques añadidos V8.4/V8.5 del final de styles.css.
 - Se consolidaron tokens de color, surface, border, radius, shadow y motion.
