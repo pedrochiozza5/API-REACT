@@ -144,6 +144,7 @@ button { cursor: pointer; }
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 @keyframes sheetIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes sheetOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
