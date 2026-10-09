@@ -13,8 +13,8 @@ import { EditorialBannerCarousel } from '@/components/storefront/EditorialBanner
 type Category = { id: number; brandId: BrandId; name: string; slug: string; imageUrl?:string|null; iconKey?:string|null };
 
 export function BrandHome({ brand }: { brand: BrandId }) {
-  const featured = useQuery({ queryKey: ['featured-products', brand], queryFn: () => apiGet<Product[]>(`/api/products?brand=${brand}&featured=1&limit=10`) });
-  const categories = useQuery({ queryKey: ['categories', brand], queryFn: () => apiGet<Category[]>(`/api/categories?brand=${brand}`) });
+  const featured = useQuery({ queryKey: ['featured-products', brand], queryFn: () => apiGet<Product[]>(`/api/products?brand=${brand}&featured=1&limit=10`), staleTime: 2 * 60_000 });
+  const categories = useQuery({ queryKey: ['categories', brand], queryFn: () => apiGet<Category[]>(`/api/categories?brand=${brand}`), staleTime: 5 * 60_000 });
 
   return <main className={`storefront-page ${brand === 'enyerbados' ? 'storefront-page--yellow' : 'storefront-page--green'}`}>
     <StoreBackdrop brand={brand} />
