@@ -122,17 +122,17 @@ export function ProductGallery({
       ref={rootRef}
       tabIndex={0}
       onKeyDown={onKeyDown}
-      className="group/gallery relative h-[64svh] min-h-[420px] w-screen overflow-hidden bg-[#ece7dd] outline-none sm:h-[72svh] lg:h-[calc(100svh-96px)] lg:min-h-[650px]"
+      className="group/gallery relative h-[66svh] min-h-[430px] w-screen overflow-hidden bg-transparent outline-none sm:h-[74svh] lg:h-[calc(100svh-96px)] lg:min-h-[650px]"
       aria-label={`Galería de ${name}`}
     >
       <div ref={viewportRef} className="h-full w-full overflow-hidden">
         <div className="flex h-full w-full touch-pan-y">
-          {visibleSlides.map((src,index) => <div key={src} className="relative h-full min-w-0 flex-[0_0_100%] bg-[radial-gradient(circle_at_46%_42%,#f8f4eb_0%,#ece7dd_58%,#e0d9cd_100%)]">
+          {visibleSlides.map((src,index) => <div key={src} className="relative h-full min-w-0 flex-[0_0_100%] bg-[linear-gradient(90deg,rgba(250,247,239,.46)_0%,rgba(250,247,239,.28)_56%,rgba(250,247,239,.12)_100%)]">
             <motion.div
               initial={reduceMotion ? false : { opacity: .45, scale: .995 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: reduceMotion ? 0 : .24 }}
-              className="absolute inset-0 px-1 pb-16 pt-3 sm:px-8 sm:pb-20 sm:pt-6 lg:px-[7vw] lg:pb-24 lg:pt-8"
+              className="absolute inset-0 px-1 pb-16 pt-3 sm:px-8 sm:pb-20 sm:pt-6 lg:pb-20 lg:pl-[5vw] lg:pr-[430px] lg:pt-6 xl:pr-[455px]"
             >
               <ProductImage
                 src={src}
@@ -146,7 +146,7 @@ export function ProductGallery({
                 loading={index === 0 ? 'eager' : 'lazy'}
                 fetchPriority={index === 0 ? 'high' : 'low'}
                 className="bg-transparent"
-                imageClassName="object-contain"
+                imageClassName="object-contain drop-shadow-[0_24px_34px_rgba(27,32,23,.10)] transition-opacity duration-200"
               />
             </motion.div>
           </div>)}
@@ -157,7 +157,7 @@ export function ProductGallery({
         <button type="button" onClick={()=>api?.scrollPrev()} aria-label="Imagen anterior" className="absolute left-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] backdrop-blur-xl transition hover:bg-white sm:left-5 lg:h-12 lg:w-12"><ChevronLeft size={20}/></button>
         <button type="button" onClick={()=>api?.scrollNext()} aria-label="Imagen siguiente" className="absolute right-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] backdrop-blur-xl transition hover:bg-white sm:right-5 lg:h-12 lg:w-12"><ChevronRight size={20}/></button>
 
-        <div className="absolute bottom-3 left-1/2 z-20 flex max-w-[70vw] -translate-x-1/2 gap-2 overflow-x-auto rounded-2xl border border-black/8 bg-[#fbf8f1]/88 p-2 backdrop-blur-xl sm:bottom-5">
+        <div className="absolute bottom-3 left-1/2 z-20 flex max-w-[70vw] -translate-x-1/2 gap-2 overflow-x-auto rounded-2xl border border-white/45 bg-[#fbf8f1]/82 p-2 backdrop-blur-md sm:bottom-5 lg:left-[calc(50%-210px)]">
           {slides.map((src,index) => <button
             type="button"
             key={src}
