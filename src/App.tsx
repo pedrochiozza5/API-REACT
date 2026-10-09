@@ -5,6 +5,7 @@ import { RouteTitle } from '@/components/storefront/RouteTitle';
 import { useCart } from '@/store/cart';
 
 const CartDrawer = lazy(() => import('@/components/storefront/CartDrawer').then((m) => ({ default: m.CartDrawer })));
+const CartPeek = lazy(() => import('@/components/storefront/CartPeek').then((m) => ({ default: m.CartPeek })));
 const CanaBot = lazy(() => import('@/components/storefront/CanaBot').then((m) => ({ default: m.CanaBot })));
 const BrandHome = lazy(() => import('@/pages/store/BrandHome').then((m) => ({ default: m.BrandHome })));
 const CatalogPage = lazy(() => import('@/pages/store/CatalogPage').then((m) => ({ default: m.CatalogPage })));
@@ -34,9 +35,10 @@ function Loading() { return <div className="grid min-h-screen place-items-center
 function GlobalOverlays(){
   const {pathname}=useLocation();
   const cartOpen=useCart(state=>state.open);
+  const cartPeek=useCart(state=>state.peekKey);
   const [cartLoaded,setCartLoaded]=useState(false);
   const [showAssist,setShowAssist]=useState(false);
-  useEffect(()=>{if(cartOpen)setCartLoaded(true);},[cartOpen]);
+  useEffect(()=>{if(cartOpen||cartPeek)setCartLoaded(true);},[cartOpen,cartPeek]);
 
   useEffect(()=>{
     if(pathname.startsWith('/admin')) return;
@@ -58,7 +60,7 @@ function GlobalOverlays(){
     return ()=>{if(timer!==undefined)window.clearTimeout(timer);if(idle!==undefined&&w.cancelIdleCallback)w.cancelIdleCallback(idle);};
   },[pathname]);
   if(pathname.startsWith('/admin'))return null;
-  return <>{cartLoaded&&<Suspense fallback={null}><CartDrawer/></Suspense>}{showAssist&&<Suspense fallback={null}><CanaBot/></Suspense>}</>;
+  return <>{cartLoaded&&<Suspense fallback={null}><CartDrawer/><CartPeek/></Suspense>}{showAssist&&<Suspense fallback={null}><CanaBot/></Suspense>}</>;
 }
 
 export default function App() {
