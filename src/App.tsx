@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { ScrollToTop } from '@/components/storefront/ScrollToTop';
 import { RouteTitle } from '@/components/storefront/RouteTitle';
+import { useCart } from '@/store/cart';
 
 const CartDrawer = lazy(() => import('@/components/storefront/CartDrawer').then((m) => ({ default: m.CartDrawer })));
 const CanaBot = lazy(() => import('@/components/storefront/CanaBot').then((m) => ({ default: m.CanaBot })));
@@ -32,7 +33,10 @@ function Loading() { return <div className="grid min-h-screen place-items-center
 
 function GlobalOverlays(){
   const {pathname}=useLocation();
+  const cartOpen=useCart(state=>state.open);
+  const [cartLoaded,setCartLoaded]=useState(false);
   const [showAssist,setShowAssist]=useState(false);
+  useEffect(()=>{if(cartOpen)setCartLoaded(true);},[cartOpen]);
   useEffect(()=>{
     if(pathname.startsWith('/admin')) return;
     const w=window as typeof window & { requestIdleCallback?: (cb:()=>void, options?:{timeout:number})=>number; cancelIdleCallback?: (id:number)=>void };
@@ -43,7 +47,7 @@ function GlobalOverlays(){
     return ()=>{if(timer)window.clearTimeout(timer);if(idle&&w.cancelIdleCallback)w.cancelIdleCallback(idle);};
   },[pathname]);
   if(pathname.startsWith('/admin'))return null;
-  return <><Suspense fallback={null}><CartDrawer/></Suspense>{showAssist&&<Suspense fallback={null}><CanaBot/></Suspense>}</>;
+  return <>{cartLoaded&&<Suspense fallback={null}><CartDrawer/></Suspense>}{showAssist&&<Suspense fallback={null}><CanaBot/></Suspense>}</>;
 }
 
 export default function App() {
