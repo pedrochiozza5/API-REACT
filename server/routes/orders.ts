@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from 'fastify';
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 import { pool } from '../db.js';
+import { makeWhatsappMessage } from '../orderMessage.js';
 
 const checkoutSchema = z.object({
   customerName: z.string().min(2).max(160),
@@ -12,29 +13,6 @@ const checkoutSchema = z.object({
   notes: z.string().max(1000).optional().or(z.literal('')),
   items: z.array(z.object({ productId: z.number().int().positive(), variantId: z.number().int().positive().optional(), qty: z.number().int().min(1).max(30) })).min(1).max(50),
 });
-
-function money(value: number) {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
-}
-
-function makeWhatsappMessage(order: any, items: any[]) {
-  const delivery = order.deliveryType === 'pickup'
-    ? 'Retiro'
-    : `Envío${order.address ? ` — ${order.address}` : ''}`;
-  return [
-    'Nombre:',
-    order.customerName,
-    '',
-    'Entrega:',
-    delivery,
-    '',
-    'Pedido:',
-    ...items.map((i) => `${i.qty}x ${i.productName}${i.variantValue ? ` — ${i.variantValue}` : ''}`),
-    '',
-    'Total:',
-    money(order.total),
-  ].join('\n');
-}
 
 export async function restoreStockForOrder(orderId: number, reason: 'cancel_restore' | 'expire_restore', actorAdminId: number | null = null) {
   const conn = await pool.getConnection();
