@@ -1,4 +1,4 @@
-BIEN AMARGOS / BIEN YERBADOS — V9.0 SOURCE
+BIEN AMARGOS / BIEN YERBADOS — V9.1 SOURCE
 
 Esta entrega contiene el CODIGO FUENTE.
 No fue compilada en esta entrega.
@@ -40,4 +40,13 @@ CAMBIOS CENTRALES V9
 
 Leer PERFORMANCE.md para el detalle técnico.
 
-VERSION: 9.0.0
+VERSION: 9.1.0
+
+
+V9.1 VISUAL / UX
+- Fondo atmosférico del Home reutilizado en páginas internas con overlays livianos.
+- ProductPage desktop con rail integrado y galería full-bleed.
+- Cart Peek no bloqueante al agregar.
+- Drawer del carrito con motion más corto y touch targets mayores.
+- No abre el carrito completo en cada add.
+- Sin cambios destructivos de datos.
