@@ -103,11 +103,16 @@ export function ProductGallery({
 
   useEffect(() => {
     if (!lightbox) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     const onEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setLightbox(false);
     };
     window.addEventListener('keydown', onEscape);
-    return () => window.removeEventListener('keydown', onEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onEscape);
+    };
   }, [lightbox]);
 
   const current = slides[selected] || slides[0] || recoveryFallback || null;
@@ -187,6 +192,9 @@ export function ProductGallery({
       animate={{opacity:1}}
       exit={{opacity:0}}
       className="fixed inset-0 z-[500] grid place-items-center bg-[#090d0a]/95 p-3 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Imagen ampliada de ${name}`}
       onClick={()=>setLightbox(false)}
     >
       <button type="button" onClick={()=>setLightbox(false)} aria-label="Cerrar imagen ampliada" className="fixed right-4 top-4 z-[501] grid h-11 w-11 place-items-center rounded-full bg-white text-[#172119]"><X size={20}/></button>
