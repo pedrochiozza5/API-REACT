@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { Product, ProductVariant } from '@/lib/types';
 import { money } from '@/lib/format';
 import { legacyProductImage } from '@/lib/productImages';
+import { productMediaUrls } from '@/lib/productMedia';
 import { useCart } from '@/store/cart';
 import { ProductImage } from './ProductImage';
 import { apiGet } from '@/lib/api';
@@ -53,14 +54,9 @@ export function ProductCard({ product }: { product: Product }) {
 
   const legacyPrimary = legacyProductImage(product);
   const media = useMemo(() => {
-    const actual = Array.from(new Set([
-      preview?.imageUrl,
-      product.imageUrl,
-      ...(preview?.images || []).map(image => image.imageUrl),
-      ...(product.images || []).map(image => image.imageUrl),
-    ].filter((url):url is string => Boolean(url))));
-    return actual.length ? actual : [legacyPrimary].filter((url):url is string => Boolean(url));
-  }, [preview, product.imageUrl, product.images, legacyPrimary]);
+    const urls = productMediaUrls(product, preview);
+    return urls.length ? urls : [legacyPrimary].filter((url): url is string => Boolean(url));
+  }, [product, preview, legacyPrimary]);
 
   useEffect(() => setMediaIndex(0), [product.id, preview?.id, media.length]);
   useEffect(()=>{if(!justAdded)return;const timer=window.setTimeout(()=>setJustAdded(false),900);return()=>window.clearTimeout(timer);},[justAdded]);
