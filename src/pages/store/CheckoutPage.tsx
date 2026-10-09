@@ -69,11 +69,11 @@ export function CheckoutPage() {
               <motion.div initial={{ scale: .4, rotate: -18 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', stiffness: 260, damping: 18, delay: .08 }} className="relative mx-auto grid h-20 w-20 place-items-center rounded-[28px] bg-[#174d35] text-white shadow-[0_18px_45px_rgba(10,45,28,.24)]">
                 <CheckCircle2 size={35} />
               </motion.div>
-              <div className="relative mt-6 font-mono-ui text-[9px] uppercase tracking-[.24em] text-black/38">Pedido {done.code}</div>
+              <div className="relative mt-6 font-mono-ui text-[11px] uppercase tracking-[.24em] text-black/38">Pedido {done.code}</div>
               <h1 className="relative mx-auto mt-3 max-w-2xl text-4xl font-black leading-[.92] tracking-[-.06em] sm:text-6xl">La ronda quedó reservada.</h1>
               <p className="relative mx-auto mt-5 max-w-lg text-sm font-semibold leading-relaxed text-black/48">Falta una sola cosa: abrir WhatsApp y confirmar entrega y pago.</p>
               <motion.a whileHover={{ y: -3, scale: 1.01 }} whileTap={{ scale: .985 }} href={done.whatsappUrl} target="_blank" rel="noreferrer" className="checkout-whatsapp-cta group relative mx-auto mt-8 flex h-[62px] max-w-sm items-center justify-between overflow-hidden rounded-[22px] bg-[#25D366] px-5 text-[#092d19] shadow-[0_20px_50px_rgba(37,211,102,.28)]">
-                <span className="relative z-10 flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-full bg-[#092d19] text-white"><MessageCircle size={19} /></span><span className="text-left"><span className="block text-[9px] font-black uppercase tracking-[.13em] opacity-55">Último paso</span><span className="block text-sm font-black">Confirmar por WhatsApp</span></span></span>
+                <span className="relative z-10 flex items-center gap-3"><span className="grid h-10 w-10 place-items-center rounded-full bg-[#092d19] text-white"><MessageCircle size={19} /></span><span className="text-left"><span className="block text-[11px] font-black uppercase tracking-[.13em] opacity-55">Último paso</span><span className="block text-sm font-black">Confirmar por WhatsApp</span></span></span>
                 <ArrowRight className="relative z-10 transition-transform group-hover:translate-x-1" size={19} />
               </motion.a>
               <button onClick={() => navigate(activeBrand === 'enyerbados' ? '/yerbados' : '/')} className="relative mt-5 text-xs font-bold text-black/42 transition hover:text-black">Volver a la tienda</button>
@@ -93,7 +93,7 @@ export function CheckoutPage() {
           <div className="section-glass mx-auto max-w-[1240px] rounded-[34px] p-4 sm:rounded-[42px] sm:p-7 lg:p-9">
             <div className="mb-5 flex items-center justify-between gap-3">
               <Link to={`/catalogo?brand=${brand}`} className="inline-flex items-center gap-2 rounded-full border border-black/8 bg-white/50 px-3.5 py-2 text-xs font-bold text-black/52 backdrop-blur-md transition hover:bg-white"><ArrowLeft size={15} /> Seguir comprando</Link>
-              <div className="hidden items-center gap-2 text-[9px] font-black uppercase tracking-[.12em] text-black/30 sm:flex"><span className="inline-flex items-center gap-1 text-[#174d35]"><Check size={13}/> Carrito</span><span>—</span><span className="text-black/65">Datos</span><span>—</span><span>WhatsApp</span></div>
+              <div className="hidden items-center gap-2 text-[11px] font-black uppercase tracking-[.12em] text-black/30 sm:flex"><span className="inline-flex items-center gap-1 text-[#174d35]"><Check size={13}/> Carrito</span><span>—</span><span className="text-black/65">Datos</span><span>—</span><span>WhatsApp</span></div>
             </div>
 
             {!items.length ? (
@@ -103,7 +103,7 @@ export function CheckoutPage() {
             ) : (
               <div className="grid gap-5 lg:grid-cols-[1fr_430px]">
                 <form id="checkout-form" onSubmit={submit} className="rounded-[32px] border border-white/55 bg-[#fbf8f1]/88 p-5 shadow-[0_22px_60px_rgba(18,34,23,.10)] backdrop-blur-xl sm:p-9">
-                  <div className="font-mono-ui text-[9px] uppercase tracking-[.22em] text-black/38">Finalizar pedido</div>
+                  <div className="font-mono-ui text-[11px] uppercase tracking-[.22em] text-black/38">Finalizar pedido</div>
                   <h1 className="mt-3 max-w-2xl text-[38px] font-black leading-[.92] tracking-[-.058em] sm:text-5xl">¿A nombre de quién armamos la ronda?</h1>
                   <p className="mt-3 max-w-xl text-xs font-semibold leading-relaxed text-black/40">Solo necesitamos los datos para coordinar. El pago se confirma por WhatsApp.</p>
 
@@ -138,18 +138,18 @@ export function CheckoutPage() {
                     whileTap={!loading ? { scale: .988 } : undefined}
                     className="checkout-final-cta group relative mt-6 hidden h-[66px] w-full items-center justify-between overflow-hidden rounded-[22px] bg-[#153f2f] px-5 text-white shadow-[0_18px_44px_rgba(13,57,38,.22)] disabled:cursor-wait sm:flex"
                   >
-                    <span className="relative z-10 flex items-center gap-3">{loading ? <LoaderCircle className="animate-spin" size={20}/> : <ShieldCheck size={20}/>}<span className="text-left"><span className="block text-[9px] font-bold uppercase tracking-[.15em] text-white/48">{loading ? 'Reservando stock' : 'Todo listo'}</span><span className="block text-sm font-black">{loading ? 'Generando pedido…' : 'Finalizar pedido'}</span></span></span>
+                    <span className="relative z-10 flex items-center gap-3">{loading ? <LoaderCircle className="animate-spin" size={20}/> : <ShieldCheck size={20}/>}<span className="text-left"><span className="block text-[11px] font-bold uppercase tracking-[.15em] text-white/48">{loading ? 'Reservando stock' : 'Todo listo'}</span><span className="block text-sm font-black">{loading ? 'Generando pedido…' : 'Finalizar pedido'}</span></span></span>
                     <span className="relative z-10 flex items-center gap-3"><span className="text-sm font-black">{money(total)}</span><span className="grid h-10 w-10 place-items-center rounded-full bg-white text-[#153f2f] transition-transform group-hover:translate-x-1"><ArrowRight size={18}/></span></span>
                   </motion.button>
                   <p className="mt-3 hidden text-center text-[10px] leading-relaxed text-black/38 sm:block">Al finalizar reservamos el stock y te damos el acceso directo a WhatsApp.</p>
                 </form>
 
                 <aside className="h-fit rounded-[32px] bg-[#171a16]/96 p-5 text-white shadow-[0_24px_70px_rgba(4,12,7,.26)] backdrop-blur-xl sm:p-7 lg:sticky lg:top-32">
-                  <div className="flex items-center justify-between"><div className="font-mono-ui text-[9px] uppercase tracking-[.22em] text-white/40">Resumen</div><div className="rounded-full bg-white/8 px-2.5 py-1 text-[9px] font-black text-white/55">{count} u.</div></div>
+                  <div className="flex items-center justify-between"><div className="font-mono-ui text-[11px] uppercase tracking-[.22em] text-white/40">Resumen</div><div className="rounded-full bg-white/8 px-2.5 py-1 text-[11px] font-black text-white/55">{count} u.</div></div>
                   <div className="mt-5 grid gap-3">
                     {items.map((item) => (
                       <motion.div layout key={item.key} className="flex gap-3 rounded-[20px] border border-white/[.055] bg-white/[.065] p-3">
-                        <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-[16px] bg-[#f2ecdf] text-center text-[8px] font-bold text-black">
+                        <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-[16px] bg-[#f2ecdf] text-center text-[10px] font-bold text-black">
                           {item.imageUrl ? <ProductImage src={item.imageUrl} alt={item.name} zoom={item.imageZoom??1.08} positionX={item.imagePositionX??50} positionY={item.imagePositionY??50} blendMode={item.imageBlendMode??'normal'} /> : item.qty + '×'}
                         </div>
                         <div className="min-w-0 flex-1"><div className="text-xs font-black leading-tight">{item.name}</div><div className="mt-1 text-[10px] text-white/38">{item.variantValue ? `${item.variantValue} · ` : ''}{item.qty} × {money(item.price)}</div></div>
@@ -178,7 +178,7 @@ export function CheckoutPage() {
             whileTap={!loading ? { scale: .985 } : undefined}
             className="checkout-mobile-final relative flex h-[68px] w-full items-center justify-between overflow-hidden rounded-[23px] border border-white/18 bg-[#153f2f] px-4 text-white shadow-[0_20px_60px_rgba(5,25,15,.32)] disabled:cursor-wait"
           >
-            <span className="relative z-10 flex items-center gap-3">{loading ? <LoaderCircle className="animate-spin" size={20}/> : <MessageCircle size={20}/>}<span className="text-left"><span className="block text-[8px] font-bold uppercase tracking-[.14em] text-white/48">{loading ? 'Un segundo' : `${count} ${count === 1 ? 'producto' : 'productos'}`}</span><span className="block text-sm font-black">{loading ? 'Reservando…' : 'Finalizar pedido'}</span></span></span>
+            <span className="relative z-10 flex items-center gap-3">{loading ? <LoaderCircle className="animate-spin" size={20}/> : <MessageCircle size={20}/>}<span className="text-left"><span className="block text-[10px] font-bold uppercase tracking-[.14em] text-white/48">{loading ? 'Un segundo' : `${count} ${count === 1 ? 'producto' : 'productos'}`}</span><span className="block text-sm font-black">{loading ? 'Reservando…' : 'Finalizar pedido'}</span></span></span>
             <span className="relative z-10 flex items-center gap-2"><span className="text-sm font-black">{money(total)}</span><span className="grid h-10 w-10 place-items-center rounded-full bg-white text-[#153f2f]"><ArrowRight size={18}/></span></span>
           </motion.button>
         </div>
