@@ -258,10 +258,9 @@ export const catalogRoutes: FastifyPluginAsync = async app => {
 
     const [rows] = await pool.query<any[]>(
       `SELECT p.id, p.brand_id AS brandId, p.category_id AS categoryId, p.name, p.slug,
-              p.short_description AS shortDescription, p.sku, p.price,
-              p.compare_at_price AS compareAtPrice, p.stock_qty AS stockQty,
-              p.track_stock AS trackStock, p.featured,
-              p.collection_featured AS collectionFeatured, p.sort_order AS sortOrder,
+              p.sku, p.price, p.compare_at_price AS compareAtPrice,
+              p.stock_qty AS stockQty, p.track_stock AS trackStock,
+              p.sort_order AS sortOrder,
               p.image_url AS imageUrl, p.image_zoom AS imageZoom,
               p.image_position_x AS imagePositionX, p.image_position_y AS imagePositionY,
               p.image_blend_mode AS imageBlendMode,
