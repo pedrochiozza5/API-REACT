@@ -15,6 +15,31 @@ export type UploadedMedia = {
 
 const ACCEPTED = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
 const MAX_SIZE = 8 * 1024 * 1024;
+const AUTO_OPTIMIZE_FROM = 900 * 1024;
+const MAX_IMAGE_EDGE = 2200;
+
+async function optimizeAdminImage(file:File):Promise<File> {
+  if (!['image/jpeg','image/png'].includes(file.type) || file.size < AUTO_OPTIMIZE_FROM || typeof createImageBitmap !== 'function') return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_IMAGE_EDGE / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const context = canvas.getContext('2d', { alpha: true });
+    if (!context) { bitmap.close(); return file; }
+    context.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+    const blob = await new Promise<Blob|null>(resolve => canvas.toBlob(resolve, 'image/webp', .86));
+    if (!blob || blob.size >= file.size * .94) return file;
+    const name = file.name.replace(/\.[^.]+$/, '') + '.webp';
+    return new File([blob], name, { type:'image/webp', lastModified:file.lastModified });
+  } catch {
+    return file;
+  }
+}
 
 export function uploadAdminImage(file: File, onProgress?: (value: number) => void): Promise<UploadedMedia> {
   return new Promise((resolve, reject) => {
@@ -87,10 +112,14 @@ export function AdminImageActions({
     setProgress(0);
     const uploaded: UploadedMedia[] = [];
     const failures: string[] = [];
+    let savedBytes = 0;
     try {
       for (let i = 0; i < selected.length; i++) {
         try {
-          const media = await uploadAdminImage(selected[i], p => setProgress(Math.round(((i + p / 100) / selected.length) * 100)));
+          const sourceFile = selected[i];
+          const optimizedFile = await optimizeAdminImage(sourceFile);
+          savedBytes += Math.max(0, sourceFile.size - optimizedFile.size);
+          const media = await uploadAdminImage(optimizedFile, p => setProgress(Math.round(((i + p / 100) / selected.length) * 100)));
           uploaded.push(media);
           if (recommendedMin > 0 && media.width && media.height && (media.width < recommendedMin || media.height < recommendedMin)) {
             toast.warning(`Imagen ${media.width}×${media.height}px. ${recommendationLabel} ${recommendedMin}×${recommendedMin}.`);
@@ -114,6 +143,7 @@ export function AdminImageActions({
         qc.invalidateQueries({ queryKey: ['admin-media'] });
         qc.invalidateQueries({ queryKey: ['admin-media-picker'] });
         toast.success(uniqueUploaded.length > 1 ? `${uniqueUploaded.length} imágenes cargadas y asignadas.` : 'Imagen cargada y asignada.');
+        if (savedBytes > 300 * 1024) toast.message(`Optimización web: ${Math.round(savedBytes / 1024)} KB menos para cargar en la tienda.`);
       }
       if (failures.length) {
         toast.error(`${failures.length} archivo${failures.length === 1 ? '' : 's'} no se pudo subir. Las imágenes correctas se conservaron.`);
