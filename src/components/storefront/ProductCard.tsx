@@ -149,10 +149,10 @@ export function ProductCard({ product }: { product: Product }) {
 
       <div className="pointer-events-none absolute left-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-2">
         {hasDiscount && <span className="product-offer-badge">-{discount}%</span>}
-        <span className="rounded-full border border-white/45 bg-[#f9f6ee]/94 px-2.5 py-1.5 font-mono-ui text-[7px] font-bold uppercase tracking-[.12em] text-black/55 backdrop-blur-md">{product.categoryName || 'Producto'}</span>
+        <span className="rounded-full border border-white/45 bg-[#f9f6ee]/94 px-2.5 py-1.5 font-mono-ui text-[10px] font-bold uppercase tracking-[.12em] text-black/55 backdrop-blur-md">{product.categoryName || 'Producto'}</span>
       </div>
 
-      {sold && <div className="pointer-events-none absolute inset-0 z-20 grid place-items-center bg-[#f7f2e8]/72 backdrop-blur-[2px]"><span className="rounded-full bg-[#111713] px-4 py-2 text-[9px] font-black text-white">SIN STOCK</span></div>}
+      {sold && <div className="pointer-events-none absolute inset-0 z-20 grid place-items-center bg-[#f7f2e8]/72 backdrop-blur-[2px]"><span className="rounded-full bg-[#111713] px-4 py-2 text-[11px] font-black text-white">SIN STOCK</span></div>}
     </div>
 
     <div className="flex min-h-[142px] flex-col p-4 sm:p-5">
@@ -162,7 +162,7 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
             <div className="text-[16px] font-black tracking-[-.025em] text-[#172119]">{money(price)}</div>
             {hasDiscount && <div className="text-[10px] font-bold text-black/35 line-through">{money(compare)}</div>}
-            {hasDiscount && <span className="text-[8px] font-black uppercase tracking-[.08em] text-[#a9472c]">-{discount}%</span>}
+            {hasDiscount && <span className="text-[10px] font-black uppercase tracking-[.08em] text-[#a9472c]">-{discount}%</span>}
           </div>
         </div>
 
@@ -189,7 +189,7 @@ export function ProductCard({ product }: { product: Product }) {
               aria-label={`Vista ${variant.value}`}
             ><span className="h-5 w-5 rounded-full border border-white shadow-sm" style={{background:variant.colorHex||'#ddd'}}/></button>;
           })}
-          {variants.length>4&&<span className="px-1 text-[9px] font-black text-black/35">+{variants.length-4}</span>}
+          {variants.length>4&&<span className="px-1 text-[11px] font-black text-black/35">+{variants.length-4}</span>}
         </div>}
       </div>
     </div>
