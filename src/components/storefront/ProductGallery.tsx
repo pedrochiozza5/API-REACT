@@ -155,7 +155,7 @@ export function ProductGallery({
 
       {slides.length > 1 && <>
         <button type="button" onClick={()=>api?.scrollPrev()} aria-label="Imagen anterior" className="absolute left-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] backdrop-blur-xl transition hover:bg-white sm:left-5 lg:h-12 lg:w-12"><ChevronLeft size={20}/></button>
-        <button type="button" onClick={()=>api?.scrollNext()} aria-label="Imagen siguiente" className="absolute right-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] backdrop-blur-xl transition hover:bg-white sm:right-5 lg:h-12 lg:w-12"><ChevronRight size={20}/></button>
+        <button type="button" onClick={()=>api?.scrollNext()} aria-label="Imagen siguiente" className="absolute right-3 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/92 text-[#173429] backdrop-blur-md transition hover:bg-white sm:right-5 lg:right-[430px] lg:h-12 lg:w-12 xl:right-[455px]"><ChevronRight size={20}/></button>
 
         <div className="absolute bottom-3 left-1/2 z-20 flex max-w-[70vw] -translate-x-1/2 gap-2 overflow-x-auto rounded-2xl border border-white/45 bg-[#fbf8f1]/82 p-2 backdrop-blur-md sm:bottom-5 lg:left-[calc(50%-210px)]">
           {slides.map((src,index) => <button
@@ -170,7 +170,7 @@ export function ProductGallery({
         <div className="absolute bottom-4 left-3 z-20 rounded-full border border-black/8 bg-[#fbf8f1]/90 px-3 py-2 font-mono-ui text-[8px] font-black tracking-[.12em] text-[#173429] backdrop-blur-xl sm:left-5">{selected+1} / {slides.length}</div>
       </>}
 
-      {current && <button type="button" onClick={()=>setLightbox(true)} className="absolute bottom-4 right-3 z-20 flex h-10 items-center gap-2 rounded-full border border-black/8 bg-[#fbf8f1]/90 px-3 text-[9px] font-black text-[#173429] backdrop-blur-xl transition hover:bg-white sm:right-5"><Maximize2 size={14}/><span className="hidden sm:inline">Ampliar</span></button>}
+      {current && <button type="button" onClick={()=>setLightbox(true)} className="absolute bottom-4 right-3 z-20 flex h-10 items-center gap-2 rounded-full border border-black/8 bg-[#fbf8f1]/90 px-3 text-[9px] font-black text-[#173429] backdrop-blur-md transition hover:bg-white sm:right-5 lg:right-[430px] xl:right-[455px]"><Maximize2 size={14}/><span className="hidden sm:inline">Ampliar</span></button>}
     </div>
 
     <AnimatePresence>{lightbox && current && <motion.div
