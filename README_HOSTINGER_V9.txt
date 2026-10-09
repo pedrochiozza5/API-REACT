@@ -50,3 +50,5 @@ V9.1 VISUAL / UX
 - Drawer del carrito con motion más corto y touch targets mayores.
 - No abre el carrito completo en cada add.
 - Sin cambios destructivos de datos.
+
+GitHub Actions genera el artefacto bienamargos-v9.1-HOSTINGER-SOURCE con package.json en la raíz para el importador de Hostinger.
