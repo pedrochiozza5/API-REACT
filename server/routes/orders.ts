@@ -141,11 +141,14 @@ export const orderRoutes: FastifyPluginAsync = async (app) => {
 
       const shippingCost = 0; const total = subtotal + shippingCost;
       await conn.query('UPDATE orders SET subtotal=?, shipping_cost=?, total=? WHERE id=?', [subtotal, shippingCost, total, orderId]);
-      await conn.commit();
+      // Resolve WhatsApp settings before committing: an error after COMMIT must never
+      // appear to the buyer as a failed order, otherwise a retry can duplicate it.
+      const [[whatsappSetting]] = await conn.query<any[]>("SELECT setting_value AS value FROM site_settings WHERE setting_key='order_whatsapp' LIMIT 1");
+      const phone = String(whatsappSetting?.value || process.env.ORDER_WHATSAPP || '5492257410476').replace(/\D/g, '');
+      if (phone.length < 8 || phone.length > 15) throw new Error('El número de WhatsApp de la tienda no está configurado correctamente.');
       const order = { id: orderId, code, customerName: input.customerName, customerPhone: input.customerPhone, deliveryType: input.deliveryType, address: input.address, notes: input.notes, total, reservedUntil };
-      const [[whatsappSetting]] = await pool.query<any[]>("SELECT setting_value AS value FROM site_settings WHERE setting_key='order_whatsapp' LIMIT 1");
-      const phone = (whatsappSetting?.value || process.env.ORDER_WHATSAPP || '5492257410476').replace(/\D/g,'');
       const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(makeWhatsappMessage(order, finalItems))}`;
+      await conn.commit();
       return reply.code(201).send({ order, whatsappUrl });
     } catch (error: any) {
       await conn.rollback();
