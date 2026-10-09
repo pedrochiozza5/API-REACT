@@ -1,6 +1,6 @@
 import { Home, Menu, Search, ShoppingBag, Store, X } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FormEvent, useDeferredValue, useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import type { BrandId, Product } from '@/lib/types';
@@ -9,12 +9,13 @@ import { BrandGlyph } from './BrandGlyph';
 import { apiGet } from '@/lib/api';
 import { money } from '@/lib/format';
 import { ProductImage } from './ProductImage';
+import { useDebouncedValue } from '@/lib/useDebouncedValue';
 
 export function Header({ brand, solid = false, hideMobileDock = false }: { brand: BrandId; solid?: boolean; hideMobileDock?: boolean }) {
   const [mobileOpen,setMobileOpen]=useState(false); const[scrolled,setScrolled]=useState(false); const[searchOpen,setSearchOpen]=useState(false); const[term,setTerm]=useState(''); const[dockCompact,setDockCompact]=useState(false);
   const navigate=useNavigate(); const location=useLocation(); const reduceMotion=useReducedMotion(); const lastY=useRef(0);
   const items=useCart(s=>s.items); const setCartOpen=useCart(s=>s.setOpen); const count=items.reduce((sum,item)=>sum+item.qty,0); const en=brand==='enyerbados';
-  const deferredTerm=useDeferredValue(term.trim());
+  const deferredTerm=useDebouncedValue(term.trim(),220);
   const products=useQuery({
     queryKey:['store-search-products',brand,deferredTerm],
     queryFn:({signal})=>apiGet<Product[]>(`/api/products?brand=${brand}&q=${encodeURIComponent(deferredTerm)}&limit=8`,signal),
