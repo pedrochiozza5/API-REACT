@@ -60,7 +60,7 @@ test('mobile product preserves images and confirms add-to-cart without checkout'
   await page.goto('/producto/mate-de-prueba');
   await expect(page.getByRole('heading', { name: 'Mate de prueba' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Imagen siguiente' })).toBeVisible();
-  await page.getByRole('button', { name: 'Agregar', exact: true }).click();
+  await page.getByRole('button', { name: /^Agregar/ }).click();
   await expect(page.getByText('Agregado a tu ronda')).toBeVisible();
   await page.screenshot({ path: 'test-results/product-mobile.png', fullPage: true });
 });
