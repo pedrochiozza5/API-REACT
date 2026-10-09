@@ -1,9 +1,9 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { ScrollToTop } from '@/components/storefront/ScrollToTop';
-import { CartDrawer } from '@/components/storefront/CartDrawer';
 import { RouteTitle } from '@/components/storefront/RouteTitle';
 
+const CartDrawer = lazy(() => import('@/components/storefront/CartDrawer').then((m) => ({ default: m.CartDrawer })));
 const CanaBot = lazy(() => import('@/components/storefront/CanaBot').then((m) => ({ default: m.CanaBot })));
 const BrandHome = lazy(() => import('@/pages/store/BrandHome').then((m) => ({ default: m.BrandHome })));
 const CatalogPage = lazy(() => import('@/pages/store/CatalogPage').then((m) => ({ default: m.CatalogPage })));
@@ -43,7 +43,7 @@ function GlobalOverlays(){
     return ()=>{if(timer)window.clearTimeout(timer);if(idle&&w.cancelIdleCallback)w.cancelIdleCallback(idle);};
   },[pathname]);
   if(pathname.startsWith('/admin'))return null;
-  return <><CartDrawer/>{showAssist&&<Suspense fallback={null}><CanaBot/></Suspense>}</>;
+  return <><Suspense fallback={null}><CartDrawer/></Suspense>{showAssist&&<Suspense fallback={null}><CanaBot/></Suspense>}</>;
 }
 
 export default function App() {
