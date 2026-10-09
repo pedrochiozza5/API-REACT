@@ -148,17 +148,10 @@ button { cursor: pointer; }
 @keyframes sheetOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
 
 @media (max-width: 1024px) {
-  .storefront-backdrop-image { object-position: center center; }
   .section-glass { backdrop-filter: blur(18px) saturate(1.05); -webkit-backdrop-filter: blur(18px) saturate(1.05); }
 }
 
 @media (max-width: 640px) {
-  .storefront-backdrop-image { object-position: center center; }
-  .hero-local-scrim {
-    background:
-      radial-gradient(ellipse at 24% 44%, rgba(247,242,232,.76) 0%, rgba(247,242,232,.48) 32%, rgba(247,242,232,.09) 66%, transparent 80%),
-      linear-gradient(180deg, rgba(5,14,9,.02), rgba(5,14,9,.22));
-  }
   .section-glass {
     background: linear-gradient(135deg, rgba(250,247,239,.84), rgba(240,234,221,.72));
     box-shadow: 0 22px 70px rgba(7,18,11,.18), inset 0 1px 0 rgba(255,255,255,.65);
@@ -293,7 +286,6 @@ button { cursor: pointer; }
  --ronda-radius-sm:16px;--ronda-radius:24px;--ronda-radius-lg:38px;
  --ronda-shadow:0 24px 80px rgba(12,31,20,.10);
 }
-.storefront-page--yellow .hero-primary-cta{background:var(--be-beige)!important;color:#243026!important}.storefront-backdrop-tint--yellow{background:linear-gradient(180deg,rgba(76,60,42,.01),rgba(76,60,42,.04) 38%,rgba(30,24,18,.14) 100%),radial-gradient(circle at 14% 70%,rgba(215,198,173,.16),transparent 46%)!important}
 .store-stage,.section-glass{border-color:rgba(255,255,255,.52)}
 .product-card-v5{background:rgba(251,248,241,.94);border:1px solid rgba(20,31,23,.07);border-radius:28px;box-shadow:0 18px 55px rgba(12,31,20,.08);transition:box-shadow .3s ease,border-color .3s ease}.product-card-v5:hover{border-color:rgba(22,75,54,.18);box-shadow:0 28px 78px rgba(12,31,20,.13)}
 .admin-shell{background:linear-gradient(180deg,#f1f2ed,#e9ece5)}.admin-card{box-shadow:0 16px 48px rgba(16,28,19,.045);border-color:rgba(20,31,23,.075)}.admin-sidebar{width:286px}.admin-topbar{height:74px}.admin-page{padding-top:28px}.admin-title{max-width:900px}.admin-primary-button{min-height:46px;border-radius:15px}.admin-input{min-height:46px}
