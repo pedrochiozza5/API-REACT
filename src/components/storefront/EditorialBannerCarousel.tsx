@@ -78,8 +78,8 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
                       alt={slide.title}
                       className="absolute inset-0 h-full w-full object-cover"
                       style={{ objectPosition: slide.objectPositionDesktop || '50% 50%' }}
-                      loading={index === 0 ? 'eager' : 'lazy'}
-                      fetchPriority={index === 0 ? 'high' : 'low'}
+                      loading="lazy"
+                      fetchPriority="low"
                       decoding="async"
                     />
                   </picture>
