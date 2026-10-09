@@ -14,6 +14,7 @@ import { apiGet } from '@/lib/api';
 import { useProductSeo } from '@/lib/useProductSeo';
 import { money } from '@/lib/format';
 import { legacyProductImage } from '@/lib/productImages';
+import { productMediaUrls } from '@/lib/productMedia';
 import type { Product, ProductImage, ProductVariant } from '@/lib/types';
 import { useCart } from '@/store/cart';
 
@@ -69,20 +70,9 @@ export function ProductPage() {
   const hasDiscount = compare > price && price >= 0;
   const discount = hasDiscount ? Math.max(1, Math.round((1 - price / compare) * 100)) : 0;
 
-  const gallery = useMemo<ProductImage[]>(() => {
-    if (!product) return [];
-    const primary = selected?.imageUrl || product.imageUrl || '';
-    const all = [...(selected?.images || []), ...(product.images || [])];
-    const seen = new Set<string>();
-    return all.filter(image => {
-      const url = String(image?.imageUrl || '').trim();
-      if (!url || url === primary || seen.has(url)) return false;
-      seen.add(url);
-      return true;
-    });
-  }, [product, selected]);
-
-  const fallback = selected?.imageUrl || product?.imageUrl || gallery[0]?.imageUrl || null;
+  const mediaUrls = useMemo(() => product ? productMediaUrls(product, selected) : [], [product, selected]);
+  const gallery = useMemo<ProductImage[]>(() => mediaUrls.slice(1).map(imageUrl => ({ imageUrl })), [mediaUrls]);
+  const fallback = mediaUrls[0] || null;
   const recoveryFallback = product ? legacyProductImage(product) : null;
   const imageZoom = Number(selected?.imageZoom ?? product?.imageZoom ?? 1);
   const imagePositionX = Number(selected?.imagePositionX ?? product?.imagePositionX ?? 50);
