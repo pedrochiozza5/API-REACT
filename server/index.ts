@@ -120,7 +120,7 @@ async function start() {
   app.get('/api/health', async (_request, reply) => {
     try {
       await dbHealth();
-      return { ok: true, db: true, version: '9.0.0', time: new Date().toISOString() };
+      return { ok: true, db: true, version: '9.1.0', time: new Date().toISOString() };
     } catch (error: any) {
       return reply.code(503).send({ ok: false, db: false, error: error.message });
     }
@@ -160,7 +160,7 @@ async function start() {
 
   const port = Number(process.env.PORT || 3000);
   await app.listen({ port, host: '0.0.0.0' });
-  app.log.info({ port, projectRoot }, 'Bien Amargos V9 API iniciada.');
+  app.log.info({ port, projectRoot }, 'Bien Amargos V9.1 API iniciada.');
 }
 
 // IMPORTANT for Hostinger/LiteSpeed:
