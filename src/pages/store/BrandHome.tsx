@@ -14,7 +14,6 @@ type Category = { id: number; brandId: BrandId; name: string; slug: string; imag
 
 export function BrandHome({ brand }: { brand: BrandId }) {
   const featured = useQuery({ queryKey: ['featured-products', brand], queryFn: () => apiGet<Product[]>(`/api/products?brand=${brand}&featured=1&limit=10`) });
-  const all = useQuery({ queryKey: ['home-products', brand], queryFn: () => apiGet<Product[]>(`/api/products?brand=${brand}&limit=80`) });
   const categories = useQuery({ queryKey: ['categories', brand], queryFn: () => apiGet<Category[]>(`/api/categories?brand=${brand}`) });
 
   return <main className={`storefront-page ${brand === 'enyerbados' ? 'storefront-page--yellow' : 'storefront-page--green'}`}>
@@ -25,7 +24,7 @@ export function BrandHome({ brand }: { brand: BrandId }) {
       <EditorialBannerCarousel brand={brand} />
       <div className="home-clean-flow">
         <FeaturedCarousel brand={brand} products={featured.data || []} loading={featured.isLoading} />
-        <CategoryShowcase brand={brand} categories={categories.data || []} products={all.data || []} />
+        <CategoryShowcase brand={brand} categories={categories.data || []} />
         <EditorialFeature brand={brand} />
       </div>
       <Footer brand={brand} />
