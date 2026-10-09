@@ -1,4 +1,51 @@
-# Bien Amargos + Bien Yerbados — V8.5
+# Bien Amargos + Bien Yerbados — V9.0
+
+V9.0 es una refactorización controlada enfocada primero en rendimiento y después en experiencia visual. Mantiene React + TypeScript + Vite, Fastify, Node.js 22 y MySQL/MariaDB, sin reemplazar el flujo de compra por WhatsApp ni destruir los datos existentes.
+
+## Qué cambia en V9
+
+- **API liviana para listados:** `/api/products` ya no entrega el mismo payload que una ficha completa.
+- **Detalle completo separado:** `/api/products/:slug` conserva multimedia, variantes, SEO y descripción completa.
+- **Home más liviana:** se eliminó la carga global de productos usada sólo para resolver imágenes de categorías.
+- **Búsqueda real:** el Header consulta al servidor sólo desde 2 caracteres y limita resultados.
+- **Catálogo progresivo:** empieza con 48 productos y puede ampliar sin descargar 120 cards desde el primer render.
+- **Caching:** React Query, HTTP público y assets reciben políticas más apropiadas.
+- **Requests cancelables:** los GET del storefront aceptan AbortSignal.
+- **Imágenes:** nuevas cargas JPG/PNG grandes pueden optimizarse a WebP antes de subir.
+- **LCP:** la foto de playa deja de cargarse como fondo global y queda únicamente en el Hero.
+- **Menos trabajo continuo:** se eliminó Lenis y animaciones decorativas infinitas de partes críticas.
+- **Code splitting:** CanaBot y CartDrawer dejan de formar parte del trabajo inicial.
+- **ProductPage V9:** carrusel full-bleed real, 100vw, mobile propio, panel compacto desktop y sticky buy bar mobile.
+- **Una sola galería:** se eliminó ProductGalleryV86.
+- **Design system:** se consolidaron controles, botones, colores, superficies, radios, sombras y estados.
+- **Limpieza CSS:** se eliminaron los CSS V8.6 fragmentados y los bloques V8.4/V8.5 acumulados al final de styles.css.
+- **Admin Multimedia:** una foto secundaria puede convertirse en principal sin re-subirla.
+- **MySQL:** índices de storefront aditivos e idempotentes, sin reset de producción.
+
+## Deploy
+
+Esta rama se entrega como **source-only**. No se ejecutó compilación en esta entrega.
+
+Para Hostinger:
+
+```bash
+npm install
+npm run build
+```
+
+Entry file:
+
+```
+server.js
+```
+
+No ejecutar `npm run db:seed` sobre producción.
+
+Ver [PERFORMANCE.md](./PERFORMANCE.md) para el detalle de auditoría, decisiones y validaciones pendientes.
+
+---
+
+# Historial V8.5
 
 V8.5 mantiene el stack existente (React + TypeScript + Vite, Fastify, Node 22 y MySQL/MariaDB) y se concentra en estabilidad de imágenes, ficha de producto, descuentos visibles, controles y precios mayoristas.
 
