@@ -101,6 +101,15 @@ export function ProductGallery({
     });
   }, []);
 
+  useEffect(() => {
+    if (!lightbox) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setLightbox(false);
+    };
+    window.addEventListener('keydown', onEscape);
+    return () => window.removeEventListener('keydown', onEscape);
+  }, [lightbox]);
+
   const current = slides[selected] || slides[0] || recoveryFallback || null;
   const visibleSlides = slides.length ? slides : [recoveryFallback].filter(Boolean) as string[];
   const safeZoom = Math.min(Math.max(Number(zoom) || 1, .86), 1.06);
