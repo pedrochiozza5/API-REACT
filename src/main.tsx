@@ -9,8 +9,8 @@ import './styles.css';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 120_000,
-      gcTime: 10 * 60_000,
+      staleTime: 20_000,
+      gcTime: 5 * 60_000,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       retry: 1,
