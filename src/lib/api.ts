@@ -4,8 +4,8 @@ async function parse<T>(response: Response): Promise<T> {
   return data as T;
 }
 
-export async function apiGet<T>(url: string): Promise<T> {
-  return parse<T>(await fetch(url, { credentials: 'include' }));
+export async function apiGet<T>(url: string, signal?: AbortSignal): Promise<T> {
+  return parse<T>(await fetch(url, { credentials: 'include', signal }));
 }
 
 export async function apiSend<T>(url: string, method: string, body?: unknown): Promise<T> {
