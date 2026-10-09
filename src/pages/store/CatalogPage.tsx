@@ -1,4 +1,4 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
@@ -10,11 +10,12 @@ import { BrandGlyph } from '@/components/storefront/BrandGlyph';
 import { apiGet } from '@/lib/api';
 import type { BrandId, Product } from '@/lib/types';
 import { AnimatedContent } from '@/components/motion/AnimatedContent';
+import { useDebouncedValue } from '@/lib/useDebouncedValue';
 
 type Category={id:number;brandId:BrandId;name:string;slug:string};
 
 export function CatalogPage(){
-  const[params,setParams]=useSearchParams();const brand=(params.get('brand')==='enyerbados'?'enyerbados':'amargos') as BrandId;const category=params.get('category')||'';const initialQ=params.get('q')||'';const[search,setSearch]=useState(initialQ);const deferredSearch=useDeferredValue(search.trim());const[limit,setLimit]=useState(48);const[sort,setSort]=useState<'order'|'price-asc'|'price-desc'|'name'>('order');const[inStock,setInStock]=useState(false);
+  const[params,setParams]=useSearchParams();const brand=(params.get('brand')==='enyerbados'?'enyerbados':'amargos') as BrandId;const category=params.get('category')||'';const initialQ=params.get('q')||'';const[search,setSearch]=useState(initialQ);const deferredSearch=useDebouncedValue(search.trim(),240);const[limit,setLimit]=useState(48);const[sort,setSort]=useState<'order'|'price-asc'|'price-desc'|'name'>('order');const[inStock,setInStock]=useState(false);
   useEffect(()=>setSearch(initialQ),[initialQ]);
   useEffect(()=>setLimit(48),[brand,category,deferredSearch]);
   useEffect(()=>{if(params.has('collection')){const next=new URLSearchParams(params);next.delete('collection');setParams(next,{replace:true});}},[params,setParams]);
