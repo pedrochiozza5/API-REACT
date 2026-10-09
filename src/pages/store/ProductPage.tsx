@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Header } from '@/components/storefront/Header';
 import { Footer } from '@/components/storefront/Footer';
 import { ProductGallery } from '@/components/storefront/ProductGallery';
+import { ProductVariantSelector } from '@/components/storefront/ProductVariantSelector';
 import { BrandGlyph } from '@/components/storefront/BrandGlyph';
 import { StoreBackdrop } from '@/components/storefront/StoreBackdrop';
 import { Button } from '@/components/ui/button';
@@ -176,35 +177,11 @@ export function ProductPage() {
               <span className="font-mono-ui text-[10px] uppercase tracking-[.12em] text-black/28">SKU {selected?.sku || product.sku}</span>
             </div>
 
-            {variants.length > 0 && <div className="mt-5">
-              <div>
-                <div className="text-[11px] font-black">Elegí {variants[0]?.name?.toLowerCase() || 'variante'}</div>
-                <div className="mt-1 text-[11px] font-semibold text-black/36">{selected ? selected.value : 'Seleccioná una opción'}</div>
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {variants.map(variant => {
-                  const out = Boolean(variant.trackStock) && Number(variant.stockQty) <= 0;
-                  const active = selected?.id === variant.id;
-                  return <motion.button
-                    type="button"
-                    key={variant.id}
-                    disabled={out}
-                    whileTap={reduceMotion ? undefined : { scale: .985 }}
-                    onClick={() => { setSelectedId(variant.id); setQty(1); }}
-                    className={`flex min-h-12 items-center gap-2 rounded-[14px] border px-3 text-left transition duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#174a36]/35 disabled:cursor-not-allowed disabled:opacity-35 ${active ? 'border-[#174a36] bg-[#174a36] text-white' : 'border-black/10 bg-white/58 text-[#172119] hover:border-[#174a36]/30 hover:bg-white/90'}`}
-                  >
-                    <span className="relative grid h-7 w-7 shrink-0 place-items-center rounded-full">
-                      <span className="h-5 w-5 rounded-full border border-black/10" style={{ background: variant.colorHex || '#d8d0bf' }} />
-                      {active && <Check size={11} className="absolute text-white drop-shadow" />}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block truncate text-[10px] font-extrabold">{variant.value}</span>
-                      <span className={`block text-[10px] font-semibold ${active ? 'text-white/60' : 'text-black/35'}`}>{out ? 'Agotado' : 'Disponible'}</span>
-                    </span>
-                  </motion.button>;
-                })}
-              </div>
-            </div>}
+            <ProductVariantSelector
+              variants={variants}
+              selectedId={selectedId}
+              onChange={id => { setSelectedId(id); setQty(1); }}
+            />
 
             <div className="mt-5 hidden gap-2.5 sm:flex">
               <div className="flex h-14 items-center rounded-[14px] border border-black/10 bg-white/58 p-1">
