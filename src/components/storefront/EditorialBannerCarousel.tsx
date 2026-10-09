@@ -36,6 +36,7 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
   const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState(false);
   const [inView, setInView] = useState(true);
+  const [tabVisible, setTabVisible] = useState(true);
   const carouselRoot = useRef<HTMLElement | null>(null);
   const timer = useRef<number | null>(null);
 
@@ -91,12 +92,18 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
   }, []);
 
   useEffect(() => {
-    if (!emblaApi || reduceMotion || hovered || !inView || document.hidden || slides.length < 2) return;
+    const onVisibilityChange = () => setTabVisible(!document.hidden);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi || reduceMotion || hovered || !inView || !tabVisible || slides.length < 2) return;
     timer.current = window.setInterval(() => emblaApi.scrollNext(), 5600);
     return () => {
       if (timer.current) window.clearInterval(timer.current);
     };
-  }, [emblaApi, hovered, inView, reduceMotion, slides.length]);
+  }, [emblaApi, hovered, inView, tabVisible, reduceMotion, slides.length]);
 
   return <section
     ref={carouselRoot}
@@ -160,14 +167,14 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
         type="button"
         aria-label="Banner anterior"
         onClick={() => emblaApi?.scrollPrev()}
-        className="absolute left-0 top-1/2 z-20 grid h-12 w-9 -translate-y-1/2 place-items-center bg-black/62 text-white transition hover:bg-black/78 sm:h-14 sm:w-11"
+        className="absolute left-0 top-1/2 z-20 grid h-12 w-11 -translate-y-1/2 place-items-center bg-black/62 text-white transition hover:bg-black/78 sm:h-14 sm:w-11"
       ><ArrowLeft size={18}/></button>
 
       <button
         type="button"
         aria-label="Banner siguiente"
         onClick={() => emblaApi?.scrollNext()}
-        className="absolute right-0 top-1/2 z-20 grid h-12 w-9 -translate-y-1/2 place-items-center bg-black/62 text-white transition hover:bg-black/78 sm:h-14 sm:w-11"
+        className="absolute right-0 top-1/2 z-20 grid h-12 w-11 -translate-y-1/2 place-items-center bg-black/62 text-white transition hover:bg-black/78 sm:h-14 sm:w-11"
       ><ArrowRight size={18}/></button>
 
       <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/28 px-2.5 py-2 backdrop-blur-sm sm:bottom-4">
@@ -176,8 +183,9 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
           key={slide.id}
           onClick={() => emblaApi?.scrollTo(index)}
           aria-label={`Ir al banner ${index + 1}`}
-          className={`h-1.5 rounded-full transition-all duration-200 ${selected === index ? 'w-7 bg-white' : 'w-1.5 bg-white/48 hover:bg-white/72'}`}
-        />)}
+          aria-current={selected === index ? 'true' : undefined}
+          className="grid h-11 w-11 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        ><span aria-hidden="true" className={`h-1.5 rounded-full transition-all duration-200 ${selected === index ? 'w-7 bg-white' : 'w-2 bg-white/60'}`}/></button>)}
       </div>
     </>}
   </section>;
