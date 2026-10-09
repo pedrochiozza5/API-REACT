@@ -14,7 +14,7 @@
 ## Seguridad
 - No ejecutar `npm run db:seed`, `setup:demo`, DROP, TRUNCATE ni reset sobre la DB real.
 - No agregar archivos .env con contraseñas al repo o al artifact.
-- El pipeline corre tests y build para validar, pero el artifact entregado **no contiene dist ni dist-server**; Hostinger los crea en su propio entorno.
+- El pipeline corre unit tests, Playwright en Chromium, typecheck y build para validar, pero el artifact entregado **no contiene dist ni dist-server**; Hostinger los crea en su propio entorno.
 - Mantener una copia de la versión anterior para rollback.
 - Aislar staging de WhatsApp real y del stock real si se hacen compras simuladas.
 
