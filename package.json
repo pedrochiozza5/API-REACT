@@ -1,7 +1,7 @@
 {
   "name": "bienamargos-bienyerbados-dual-store",
   "private": true,
-  "version": "9.2.0",
+  "version": "10.0.0",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k -n API,WEB \"npm:dev:server\" \"npm:dev:client\"",
@@ -14,7 +14,9 @@
     "setup": "npm run db:init",
     "import:world-map": "tsx scripts/import-world-map.ts",
     "setup:production": "npm run db:init",
-    "setup:demo": "npm run db:init && npm run db:seed"
+    "setup:demo": "npm run db:init && npm run db:seed",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck:web": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@fastify/cookie": "^11.0.2",
