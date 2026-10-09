@@ -1,13 +1,13 @@
-name: Hostinger source package
+name: Validate and package V10 source
 
 on:
   push:
     branches:
-      - v9.2-source
+      - v10-source
   workflow_dispatch:
 
 jobs:
-  package:
+  verify-and-package:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,7 +15,24 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Prepare Hostinger source root
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Typecheck frontend
+        run: npm run typecheck:web
+
+      - name: Verify Hostinger build compatibility
+        run: npm run build
+
+      - name: Prepare clean source at ZIP root
         shell: bash
         run: |
           set -euo pipefail
@@ -26,16 +43,20 @@ jobs:
             --exclude 'node_modules/' \
             --exclude 'dist/' \
             --exclude 'dist-server/' \
-            --exclude 'hostinger-source/'
+            --exclude 'hostinger-source/' \
+            --include '.env.example' \
+            --exclude '.env' \
+            --exclude '.env.*'
           test -f hostinger-source/package.json
           test -f hostinger-source/server.js
           test -d hostinger-source/src
           test -d hostinger-source/server
+          node -e "const p=require('./hostinger-source/package.json');if(p.version!=='10.0.0')process.exit(1)"
 
-      - name: Upload Hostinger-ready ZIP
+      - name: Upload source ZIP for Hostinger
         uses: actions/upload-artifact@v4
         with:
-          name: bienamargos-v9.2-HOSTINGER-SOURCE
+          name: bienamargos-v10-HOSTINGER-SOURCE
           path: hostinger-source/**
           if-no-files-found: error
           compression-level: 6
