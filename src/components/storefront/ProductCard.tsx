@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -6,7 +6,6 @@ import type { Product, ProductVariant } from '@/lib/types';
 import { money } from '@/lib/format';
 import { legacyProductImage } from '@/lib/productImages';
 import { useCart } from '@/store/cart';
-import { toast } from 'sonner';
 import { ProductImage } from './ProductImage';
 import { apiGet } from '@/lib/api';
 
@@ -26,6 +25,7 @@ export function ProductCard({ product }: { product: Product }) {
     variants.find(variant => !variant.trackStock || Number(variant.stockQty) > 0) || variants[0] || null,
   );
   const [mediaIndex,setMediaIndex] = useState(0);
+  const [justAdded,setJustAdded] = useState(false);
 
   useEffect(() => {
     setPreview(current =>
@@ -63,6 +63,7 @@ export function ProductCard({ product }: { product: Product }) {
   }, [preview, product.imageUrl, product.images, legacyPrimary]);
 
   useEffect(() => setMediaIndex(0), [product.id, preview?.id, media.length]);
+  useEffect(()=>{if(!justAdded)return;const timer=window.setTimeout(()=>setJustAdded(false),900);return()=>window.clearTimeout(timer);},[justAdded]);
 
   const primary = media[mediaIndex] || media[0] || legacyPrimary;
   const zoom = Math.min(Number(preview?.imageZoom ?? product.imageZoom ?? 1.03), 1.03);
@@ -89,7 +90,7 @@ export function ProductCard({ product }: { product: Product }) {
       const only=variants[0];
       if (Boolean(only.trackStock) && Number(only.stockQty) <= 0) return;
       add(product,1,only);
-      toast.success(`${product.name} · ${only.value} agregado`);
+      setJustAdded(true);
       return;
     }
     if (product.hasVariants) {
@@ -97,7 +98,7 @@ export function ProductCard({ product }: { product: Product }) {
       return;
     }
     add(product,1,null);
-    toast.success('Agregado a la ronda.');
+    setJustAdded(true);
   }
 
   function previousMedia() {
@@ -175,7 +176,7 @@ export function ProductCard({ product }: { product: Product }) {
           onClick={quickAdd}
           className="store-primary-button grid h-11 w-11 shrink-0 place-items-center rounded-[14px]"
           aria-label={variants.length>1?`Elegir opción de ${product.name}`:`Agregar ${product.name}`}
-        ><Plus size={17}/></button>
+        >{justAdded?<Check size={17}/>:<Plus size={17}/>}</button>
       </div>
 
       <div className="mt-auto min-h-10 pt-3">
