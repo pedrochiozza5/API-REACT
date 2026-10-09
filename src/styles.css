@@ -310,7 +310,7 @@ button { cursor: pointer; }
   --ba-mobile-dock-h:64px;
 }
 .nav-link--active{opacity:1}.nav-link--active::after{right:0}
-.home-clean-flow{position:relative;margin-top:0;background:linear-gradient(180deg,rgba(247,243,234,.06) 0%,rgba(247,243,234,.70) 9%,rgba(247,243,234,.82) 24%,rgba(247,243,234,.86) 78%,rgba(247,243,234,.22) 100%)}
+.home-clean-flow{position:relative;margin-top:0;background:linear-gradient(180deg,rgba(247,243,234,.98) 0%,rgba(247,243,234,.995) 18%,rgba(244,239,229,.99) 100%)}
 .home-clean-flow::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 8% 34%,rgba(215,198,173,.14),transparent 28%),radial-gradient(circle at 92% 68%,rgba(22,75,54,.08),transparent 25%);opacity:.6}
 .home-clean-flow>*{position:relative;z-index:1}
 .catalog-surface,.world-shell{border:1px solid rgba(255,255,255,.58);background:linear-gradient(145deg,rgba(251,248,241,.88),rgba(243,237,225,.82));box-shadow:0 22px 64px rgba(9,24,16,.10);backdrop-filter:blur(8px) saturate(1.02);-webkit-backdrop-filter:blur(8px) saturate(1.02)}
@@ -328,7 +328,7 @@ button { cursor: pointer; }
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid rgba(22,75,54,.55);outline-offset:3px}
 @media(min-width:640px){.cana-launcher{right:24px;bottom:24px;height:64px;width:64px}.cana-panel{inset-inline:auto;right:24px;bottom:96px;width:360px}.cana-launcher--product{bottom:24px}.cana-panel--product{bottom:96px}}
 @media(max-width:640px){
-  .home-clean-flow{background:linear-gradient(180deg,rgba(247,243,234,.14) 0%,rgba(247,243,234,.74) 6%,rgba(247,243,234,.86) 88%,rgba(247,243,234,.20) 100%)}
+  .home-clean-flow{background:linear-gradient(180deg,rgba(247,243,234,.99),rgba(243,237,226,.995))}
   .section-glass{background:linear-gradient(145deg,rgba(251,248,241,.91),rgba(242,235,221,.86));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
   .product-card-v5{border-radius:21px}
   .category-card-v5{border-radius:22px}
@@ -432,10 +432,8 @@ button:not(:disabled),[role="button"]:not(:disabled){cursor:pointer}
   z-index:0;
   overflow:hidden;
   pointer-events:none;
-  background:#e8e0d3;
+  background:linear-gradient(180deg,#f7f3e9 0%,#efe8dc 52%,#e7ded0 100%);
 }
-.storefront-backdrop__picture,
-.storefront-backdrop__image,
 .storefront-backdrop__wash,
 .storefront-backdrop__ambient{
   position:absolute;
@@ -443,39 +441,21 @@ button:not(:disabled),[role="button"]:not(:disabled){cursor:pointer}
   height:100%;
   width:100%;
 }
-.storefront-backdrop__picture{display:block}
-.storefront-backdrop__image{
-  object-fit:cover;
-  object-position:center 48%;
-  opacity:.54;
-  filter:saturate(.78) contrast(.92) brightness(1.03);
-  transform:scale(1.015);
-}
 .storefront-backdrop__wash{
-  background:
-    linear-gradient(180deg,rgba(247,243,233,.68) 0%,rgba(247,243,233,.56) 22%,rgba(239,232,220,.48) 62%,rgba(235,226,211,.58) 100%);
+  background:linear-gradient(180deg,rgba(255,255,255,.18),transparent 34%,rgba(255,255,255,.10));
 }
 .storefront-backdrop__ambient{
   background:
-    radial-gradient(circle at 12% 14%,rgba(24,83,59,.10),transparent 30%),
-    radial-gradient(circle at 86% 72%,rgba(216,194,151,.16),transparent 28%);
-}
-.storefront-backdrop--green .storefront-backdrop__ambient{
-  background:
-    radial-gradient(circle at 13% 14%,rgba(23,77,53,.13),transparent 32%),
-    radial-gradient(circle at 82% 72%,rgba(201,178,135,.13),transparent 30%);
-}
-.storefront-backdrop--yellow .storefront-backdrop__image{
-  filter:saturate(.70) sepia(.05) brightness(1.05);
+    radial-gradient(circle at 12% 14%,rgba(23,74,54,.075),transparent 30%),
+    radial-gradient(circle at 86% 74%,rgba(210,186,142,.12),transparent 30%);
 }
 .storefront-backdrop--yellow .storefront-backdrop__ambient{
   background:
-    radial-gradient(circle at 14% 14%,rgba(201,169,92,.16),transparent 32%),
-    radial-gradient(circle at 84% 74%,rgba(42,83,61,.08),transparent 28%);
+    radial-gradient(circle at 14% 14%,rgba(202,169,88,.11),transparent 31%),
+    radial-gradient(circle at 84% 72%,rgba(23,74,54,.05),transparent 28%);
 }
 @media(max-width:640px){
-  .storefront-backdrop__image{opacity:.46;object-position:center 42%;filter:saturate(.74) contrast(.90) brightness(1.05)}
-  .storefront-backdrop__wash{background:linear-gradient(180deg,rgba(247,243,233,.74),rgba(242,235,223,.66) 58%,rgba(235,226,211,.72))}
+  .storefront-backdrop{background:linear-gradient(180deg,#f7f3e9 0%,#eee7db 58%,#e6dccd 100%)}
 }
 
 /* Buttons */
