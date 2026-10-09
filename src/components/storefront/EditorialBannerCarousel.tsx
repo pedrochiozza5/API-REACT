@@ -73,15 +73,14 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
                 <div className="relative aspect-[4/5] min-h-[520px] overflow-hidden sm:aspect-[16/8.2] sm:min-h-[560px] lg:aspect-[2.25/1] lg:min-h-[600px]">
                   <picture>
                     {slide.mobileImageUrl && <source media="(max-width: 639px)" srcSet={slide.mobileImageUrl}/>} 
-                    <motion.img
+                    <img
                       src={slide.imageUrl}
                       alt={slide.title}
                       className="absolute inset-0 h-full w-full object-cover"
                       style={{ objectPosition: slide.objectPositionDesktop || '50% 50%' }}
-                      initial={false}
-                      animate={{ scale: selected === index && !reduceMotion ? 1.025 : 1 }}
-                      transition={{ duration: 6.2, ease: [0.22, 1, 0.36, 1] }}
                       loading={index === 0 ? 'eager' : 'lazy'}
+                      fetchPriority={index === 0 ? 'high' : 'low'}
+                      decoding="async"
                     />
                   </picture>
                   {slide.mobileImageUrl && <style>{`@media (max-width:639px){[data-banner-id="${slide.id}"] img{object-position:${slide.objectPositionMobile || '50% 50%'} !important;}}`}</style>}
@@ -130,10 +129,6 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
               </button>
             ))}
           </div>
-
-          {!reduceMotion && !hovered && (
-            <motion.div key={selected} className="absolute bottom-0 left-0 z-20 h-[3px] bg-white/65" initial={{ width: 0 }} animate={{ width: '100%' }} transition={{ duration: 5.2, ease: 'linear' }} />
-          )}
         </>}
       </div>
     </section>
