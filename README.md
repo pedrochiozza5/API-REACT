@@ -1,3 +1,25 @@
+# Bien Amargos + Bien Yerbados — V9.1
+
+V9.1 refina la V9 sin volver a una estrategia de parches. La prioridad es recuperar la atmósfera visual del Home en toda la tienda, mejorar profundamente la ProductPage desktop y hacer que el carrito se sienta más premium sin volver a cargar el runtime con efectos continuos.
+
+## Cambios V9.1
+
+- **Atmósfera continua:** StoreBackdrop vuelve a utilizar la fotografía del Home como capa visual compartida, con overlays y ambient color. No usa tile, canvas, parallax ni blur animado.
+- **ProductPage desktop:** el viejo panel flotante pasa a un commerce rail integrado al borde derecho, sin card gigante ni sombra pesada.
+- **Galería:** sigue siendo 100vw full-bleed; el producto queda contenido y el fondo global aporta contexto sin duplicar la foto del producto como blur.
+- **Mobile:** se mantiene la ficha debajo de la foto y la compra sticky con safe-area.
+- **Motion:** entrada suave del rail, fade de imágenes decodificadas, transición corta de precio/variantes y feedback “Agregado” de aproximadamente un segundo.
+- **Cart Peek:** agregar un producto ya no abre el drawer completo automáticamente. Aparece una confirmación compacta y no bloqueante con acceso a “Ver carrito”.
+- **Cart Drawer:** apertura/cierre más breve, superficies menos pesadas, touch targets mayores y cambios de subtotal más discretos.
+- **Header:** más integrado con el fondo al inicio y más sólido al hacer scroll; badge del carrito con microanimación.
+- **Footer:** transición visual más natural hacia la superficie oscura.
+- **Accesibilidad:** Escape cierra el lightbox y los controles táctiles críticos mantienen targets amplios.
+- **Datos:** no hay migraciones destructivas, seed, DROP ni TRUNCATE.
+
+Esta rama continúa siendo **source-only**. No se ejecutó build en esta entrega.
+
+---
+
 # Bien Amargos + Bien Yerbados — V9.0
 
 V9.0 es una refactorización controlada enfocada primero en rendimiento y después en experiencia visual. Mantiene React + TypeScript + Vite, Fastify, Node.js 22 y MySQL/MariaDB, sin reemplazar el flujo de compra por WhatsApp ni destruir los datos existentes.
