@@ -220,7 +220,7 @@ export function ProductPage() {
     <div className="storefront-content">
       <Header brand={brand} solid hideMobileDock />
 
-      <section className="relative w-screen">
+      <section className="relative w-full lg:grid lg:grid-cols-[minmax(0,1.65fr)_minmax(380px,.55fr)] lg:items-start">
         <ProductGallery
           images={gallery}
           fallback={fallback}
@@ -242,9 +242,9 @@ export function ProductPage() {
           initial={reduceMotion ? false : { opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: reduceMotion ? 0 : .38, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-30 border-t border-black/[.07] bg-[#fbf8f1]/94 px-4 py-7 sm:px-6 lg:absolute lg:inset-y-0 lg:right-0 lg:block lg:w-[405px] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:border-white/45 lg:bg-[#fbf8f1]/86 lg:px-7 lg:py-8 lg:backdrop-blur-md xl:w-[430px] xl:px-8"
+          className="relative z-20 border-t border-black/[.07] bg-[#fbf8f1] px-4 py-7 sm:px-6 lg:sticky lg:top-[108px] lg:min-h-[calc(100svh-108px)] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:border-black/[.07] lg:bg-[#fbf8f1] lg:px-8 lg:py-10 xl:px-10"
         >
-          <div className="mx-auto w-full max-w-[560px] lg:mx-0">
+          <div className="mx-auto w-full max-w-[560px] lg:mx-0 lg:max-w-[520px]">
             <div className="flex flex-wrap items-center gap-2">
               <div className="inline-flex items-center gap-2 font-mono-ui text-[8px] font-semibold uppercase tracking-[.18em] text-black/42">
                 <BrandGlyph kind={yerbados ? 'yerba' : 'mate'} className="h-4 w-4" />
@@ -253,7 +253,7 @@ export function ProductPage() {
               {hasDiscount && <span className="rounded-full bg-[#a9472c] px-2.5 py-1 text-[8px] font-black text-white">-{discount}%</span>}
             </div>
 
-            <h1 className="mt-3 max-w-[13ch] text-[clamp(2.4rem,9vw,3.7rem)] font-black leading-[.9] tracking-[-.065em] text-[#172119] lg:text-[clamp(2.35rem,3vw,3.45rem)]">{product.name}</h1>
+            <h1 className="mt-3 max-w-[13ch] text-[clamp(2.35rem,9vw,3.6rem)] font-black leading-[.92] tracking-[-.06em] text-[#172119] lg:text-[clamp(2.5rem,3.2vw,3.7rem)]">{product.name}</h1>
 
             <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <AnimatePresence mode="popLayout" initial={false}>
@@ -326,8 +326,8 @@ export function ProductPage() {
               </Button>
             </div>
 
-            <div className="mt-5 grid gap-2 border-t border-black/[.07] pt-4">
-              <details className="group border-b border-black/[.07] py-3">
+            <div className="mt-6 grid gap-0 border-t border-black/[.07]">
+              <details className="group border-b border-black/[.07] py-4">
                 <summary className="cursor-pointer list-none text-[10px] font-black">Detalle <span className="float-right text-black/30 transition group-open:rotate-45">+</span></summary>
                 <p className="pt-3 text-[12px] leading-[1.65] text-black/50">{product.description || product.shortDescription || 'Selección de la casa.'}</p>
               </details>
