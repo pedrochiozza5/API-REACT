@@ -23,10 +23,19 @@ async function enrichProductList(products:any[]) {
 
   const [images, variants] = await Promise.all([
     pool.query<any[]>(
-      `SELECT id, product_id AS productId, image_url AS imageUrl, alt_text AS altText, sort_order AS sortOrder
-       FROM product_images
-       WHERE product_id IN (${placeholders})
-       ORDER BY product_id, sort_order, id`,
+      `SELECT id, productId, imageUrl, altText, sortOrder
+       FROM (
+         SELECT id,
+                product_id AS productId,
+                image_url AS imageUrl,
+                alt_text AS altText,
+                sort_order AS sortOrder,
+                ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY sort_order, id) AS mediaRank
+         FROM product_images
+         WHERE product_id IN (${placeholders})
+       ) ranked
+       WHERE mediaRank <= 2
+       ORDER BY productId, sortOrder, id`,
       ids,
     ).then(([rows]) => rows),
     pool.query<any[]>(
