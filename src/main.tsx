@@ -5,17 +5,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
 import App from './App';
 import './styles.css';
-import './v86-hero.css';
-import './v86-product-a.css';
-import './v86-product-b.css';
-import './v86-product-c.css';
-import './v86-controls.css';
-import './v86-thumbs.css';
-import './v86-product-real.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { staleTime: 30_000, refetchOnWindowFocus: false, retry: 1 },
+    queries: {
+      staleTime: 120_000,
+      gcTime: 10 * 60_000,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: 1,
+    },
   },
 });
 
