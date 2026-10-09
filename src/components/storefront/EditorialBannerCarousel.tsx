@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -6,6 +6,8 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useQuery } from '@tanstack/react-query';
 import type { BrandId } from '@/lib/types';
 import { apiGet } from '@/lib/api';
+
+type StoreSettings = { settings: Record<string, string> };
 
 type Banner = {
   id: number;
@@ -33,6 +35,8 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start', skipSnaps: false });
   const [selected, setSelected] = useState(0);
   const [hovered, setHovered] = useState(false);
+  const [inView, setInView] = useState(true);
+  const carouselRoot = useRef<HTMLElement | null>(null);
   const timer = useRef<number | null>(null);
 
   const q = useQuery({
@@ -41,7 +45,27 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
     staleTime: 60_000,
   });
 
-  const slides = useMemo(() => q.data?.length ? q.data : fallback, [q.data]);
+  const settings = useQuery({
+    queryKey: ['store-settings'],
+    queryFn: ({ signal }) => apiGet<StoreSettings>('/api/store-settings', signal),
+    staleTime: 5 * 60_000,
+  });
+  // One full-width hero instead of two competing full-screen sections.
+  const slides = useMemo(() => {
+    const en = brand === 'enyerbados';
+    const hero: Banner = {
+      id: -100, brandId: brand,
+      eyebrow: en ? 'Bien Yerbados · Mar de Ajó' : 'Bien Amargos · Mar de Ajó',
+      title: settings.data?.settings?.[en ? 'hero_enyerbados' : 'hero_amargos'] ||
+        (en ? 'Yerba con presencia.' : 'Tu próxima ronda empieza acá.'),
+      subtitle: en ? 'Una selección para acompañar cada ronda.' : 'Mates y accesorios elegidos para compartir.',
+      imageUrl: '/brand/hero-beach.webp',
+      mobileImageUrl: '/brand/hero-beach-mobile.webp',
+      ctaLabel: en ? 'Ver yerbas' : 'Ver catálogo',
+      href: `/catalogo?brand=${brand}`, sortOrder: -1,
+    };
+    return [hero, ...(q.data?.length ? q.data : fallback)];
+  }, [brand, q.data, settings.data]);
 
   const sync = useCallback(() => {
     if (!emblaApi) return;
@@ -59,15 +83,24 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
   }, [emblaApi, sync]);
 
   useEffect(() => {
-    if (!emblaApi || reduceMotion || hovered || slides.length < 2) return;
+    const node = carouselRoot.current;
+    if (!node || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(entries => setInView(entries.some(e => e.isIntersecting)), { threshold: .15 });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!emblaApi || reduceMotion || hovered || !inView || document.hidden || slides.length < 2) return;
     timer.current = window.setInterval(() => emblaApi.scrollNext(), 5600);
     return () => {
       if (timer.current) window.clearInterval(timer.current);
     };
-  }, [emblaApi, hovered, reduceMotion, slides.length]);
+  }, [emblaApi, hovered, inView, reduceMotion, slides.length]);
 
   return <section
-    className="relative w-screen overflow-hidden bg-[#111713]"
+    ref={carouselRoot}
+    className="relative w-full overflow-hidden bg-[#111713]"
     aria-label="Historias destacadas"
     onMouseEnter={() => setHovered(true)}
     onMouseLeave={() => setHovered(false)}
@@ -76,22 +109,23 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
   >
     <div ref={emblaRef} className="overflow-hidden">
       <div className="flex touch-pan-y">
-        {slides.map((slide, index) => <article key={slide.id} data-banner-id={slide.id} className="relative min-w-0 flex-[0_0_100%]">
+        {slides.map((slide, index) => <article key={slide.id} className="relative min-w-0 flex-[0_0_100%]" style={{
+          '--banner-position-desktop': slide.objectPositionDesktop || '50% 50%',
+          '--banner-position-mobile': slide.objectPositionMobile || slide.objectPositionDesktop || '50% 50%',
+        } as CSSProperties}>
           <div className="relative h-[66svh] min-h-[500px] overflow-hidden sm:h-[68svh] sm:min-h-[560px] lg:h-[72svh] lg:min-h-[620px] xl:min-h-[680px]">
             <picture>
               {slide.mobileImageUrl && <source media="(max-width: 639px)" srcSet={slide.mobileImageUrl}/>}
               <img
                 src={slide.imageUrl}
                 alt={slide.title}
-                className="absolute inset-0 h-full w-full object-cover"
-                style={{ objectPosition: slide.objectPositionDesktop || '50% 50%' }}
-                loading="lazy"
+                className="editorial-banner-image absolute inset-0 h-full w-full object-cover"
+                loading={index === 0 ? 'eager' : 'lazy'}
                 decoding="async"
-                fetchPriority="low"
+                fetchPriority={index === 0 ? 'high' : 'low'}
               />
             </picture>
 
-            {slide.mobileImageUrl && <style>{`@media (max-width:639px){[data-banner-id="${slide.id}"] img{object-position:${slide.objectPositionMobile || '50% 50%'} !important;}}`}</style>}
 
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,14,10,.48)_0%,rgba(8,14,10,.16)_40%,transparent_68%)] sm:bg-[linear-gradient(90deg,rgba(8,14,10,.42)_0%,rgba(8,14,10,.12)_38%,transparent_66%)]"/>
             <div className="absolute inset-x-0 bottom-0 h-[36%] bg-gradient-to-t from-black/38 via-black/10 to-transparent"/>
