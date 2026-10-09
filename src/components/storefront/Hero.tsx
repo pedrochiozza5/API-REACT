@@ -35,7 +35,7 @@ export function Hero({brand}:{brand:BrandId}) {
   });
   const title=settings.data?.settings?.[en?'hero_enyerbados':'hero_amargos']||copy.title;
 
-  return <section className="relative min-h-[92svh] overflow-hidden bg-[#d9d2c5] sm:min-h-[100svh]">
+  return <section className="relative min-h-[78svh] overflow-hidden bg-[#d9d2c5] sm:min-h-[86svh] lg:min-h-[88svh]">
     <picture className="absolute inset-0">
       <source media="(max-width: 768px)" srcSet="/brand/hero-beach-mobile.webp"/>
       <img
@@ -50,7 +50,7 @@ export function Hero({brand}:{brand:BrandId}) {
     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_18%_45%,rgba(248,244,235,.90)_0%,rgba(248,244,235,.72)_26%,rgba(248,244,235,.20)_52%,transparent_72%),linear-gradient(180deg,rgba(6,14,9,.04),rgba(6,14,9,.22))]"/>
     {en&&<div className="absolute inset-0 bg-[#c8b79f]/[.08] mix-blend-color"/>}
 
-    <div className="relative mx-auto flex min-h-[92svh] max-w-[1700px] items-center px-5 pb-20 pt-28 sm:min-h-[100svh] sm:px-8 sm:pt-36 lg:px-16 lg:pt-40 2xl:px-20">
+    <div className="relative mx-auto flex min-h-[78svh] max-w-[1700px] items-end px-5 pb-14 pt-28 sm:min-h-[86svh] sm:px-8 sm:pb-16 sm:pt-32 lg:min-h-[88svh] lg:px-16 lg:pb-20 2xl:px-20">
       <div className="w-full max-w-[980px]">
         <motion.div
           initial={reduce?false:{opacity:0,y:10}}
@@ -63,7 +63,7 @@ export function Hero({brand}:{brand:BrandId}) {
           initial={reduce?false:{opacity:0,y:18}}
           animate={{opacity:1,y:0}}
           transition={{delay:.06,duration:reduce?0:.5,ease:[.22,1,.36,1]}}
-          className="mt-5 max-w-[950px] text-[clamp(3.8rem,8.6vw,9rem)] font-black leading-[.82] tracking-[-.075em] text-[#103526]"
+          className="mt-5 max-w-[880px] text-[clamp(3.2rem,7vw,7.4rem)] font-black leading-[.88] tracking-[-.068em] text-[#103526]"
         >{title}</motion.h1>
 
         <motion.div
