@@ -14,7 +14,7 @@ import { adminRoutes } from './routes/admin.js';
 import { uploadRoutes } from './routes/upload.js';
 import { cronRoutes } from './routes/cron.js';
 import { worldRoutes } from './routes/world.js';
-import { dbHealth, ensureV85Schema } from './db.js';
+import { dbHealth, ensureV9Schema } from './db.js';
 import { renderSeoDocument, seoRoutes } from './seo.js';
 import { getLegacyUploadRoot, getUploadRoot } from './uploads.js';
 
@@ -83,7 +83,7 @@ async function start() {
   await app.register(multipart, { limits: { fileSize: 8 * 1024 * 1024, files: 8 } });
   await app.register(rateLimit, { global: false, max: 120, timeWindow: '1 minute' });
 
-  await ensureV85Schema();
+  await ensureV9Schema();
 
   // Resolve runtime paths from this compiled file instead of relying on cwd.
   // Hostinger starts Node through its own LiteSpeed wrapper, so cwd is not
@@ -104,6 +104,9 @@ async function start() {
     root: uploadRoot,
     prefix: '/uploads/',
     decorateReply: false,
+    cacheControl: true,
+    maxAge: '30d',
+    immutable: true,
   });
 
   await app.register(catalogRoutes);
@@ -117,7 +120,7 @@ async function start() {
   app.get('/api/health', async (_request, reply) => {
     try {
       await dbHealth();
-      return { ok: true, db: true, version: '8.5.0', time: new Date().toISOString() };
+      return { ok: true, db: true, version: '9.0.0', time: new Date().toISOString() };
     } catch (error: any) {
       return reply.code(503).send({ ok: false, db: false, error: error.message });
     }
@@ -130,6 +133,8 @@ async function start() {
       prefix: '/',
       wildcard: false,
       index: false,
+      cacheControl: true,
+      maxAge: '30d',
     });
 
     app.setNotFoundHandler(async (request, reply) => {
@@ -155,7 +160,7 @@ async function start() {
 
   const port = Number(process.env.PORT || 3000);
   await app.listen({ port, host: '0.0.0.0' });
-  app.log.info({ port, projectRoot }, 'Bien Amargos V8.5 API iniciada.');
+  app.log.info({ port, projectRoot }, 'Bien Amargos V9 API iniciada.');
 }
 
 // IMPORTANT for Hostinger/LiteSpeed:
