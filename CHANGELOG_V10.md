@@ -9,7 +9,7 @@
 - Pedidos: se resuelve teléfono de WhatsApp *antes* de confirmar la transacción, evitando falso error post-commit.
 - Pedidos: `makeWhatsappMessage` extraído a módulo tipado y testeable.
 - Administración: tipado explícito `flatMap<Row>` para filas de stock sin variante.
-- Tests: 6 tests de lógica de imágenes y mensajes.
+- Tests: 6 tests de lógica de imágenes y mensajes; 3 smoke tests Playwright de Home, carousel y producto mobile con mocks de API.
 - CI: tests + typecheck + build en Node 22, packaging source-only con ZIP raíz compatible con Hostinger.
 - Docs: auditoría, design system, rendimiento, QA, deploy y changelog.
 
