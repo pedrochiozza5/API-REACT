@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
@@ -114,7 +114,7 @@ export function ProductGallery({
   const visibleSlides = slides.length ? slides : [recoveryFallback].filter(Boolean) as string[];
   const safeZoom = Math.min(Math.max(Number(zoom) || 1, .86), 1.06);
 
-  function onKeyDown(event:KeyboardEvent<HTMLDivElement>) {
+  function onKeyDown(event:ReactKeyboardEvent<HTMLDivElement>) {
     if (!api || slides.length < 2) return;
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
