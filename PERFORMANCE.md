@@ -1,10 +1,44 @@
-# PERFORMANCE — Bien Amargos / Bien Yerbados V9.0
+# PERFORMANCE — Bien Amargos / Bien Yerbados V9.1
 
 ## Objetivo
 
 V9.0 prioriza tiempo real hasta interacción, estabilidad visual y reducción de trabajo innecesario en red, JavaScript, imágenes y MySQL.
 
 > Esta entrega es código fuente sin compilar. No se ejecutaron Lighthouse ni benchmarks de producción en este entorno, por pedido de mantener la entrega source-only. Los objetivos LCP < 2.5 s, CLS < 0.1, INP < 200 ms y Lighthouse mobile > 90 quedan como metas a validar en el deploy real.
+
+## V9.1 — atmósfera + motion sin volver atrás en performance
+
+V9.1 reintroduce de forma deliberada la fotografía del Home como atmósfera en páginas internas porque forma parte del nuevo criterio visual. Se hace con estas restricciones:
+
+- se reutilizan los mismos archivos WEBP ya existentes del Hero;
+- no hay preload global desde index.html;
+- StoreBackdrop los solicita con prioridad baja;
+- no hay parallax JavaScript, canvas ni animación continua;
+- no se duplica la foto del producto como fondo blur;
+- las superficies internas son translúcidas para aprovechar una sola capa fotográfica;
+- el Hero conserva su propia prioridad alta para LCP;
+- en navegación posterior el asset puede reutilizar caché HTTP/browser.
+
+Por lo tanto, la V9.1 hace un trade-off consciente: una página interna que todavía no tenga esos assets en caché puede descargar aproximadamente el WEBP correspondiente al viewport, a cambio de mantener una identidad visual continua. El objetivo es que esa decisión no vuelva a introducir trabajo permanente de CPU/GPU.
+
+### Motion V9.1
+
+- Cart Peek compacto en vez de abrir el drawer completo en cada agregado.
+- Drawer: 280 ms de entrada y 200 ms de salida aproximadamente.
+- Product rail: reveal corto usando opacity + translate.
+- ProductImage: fade de 200 ms después de decodificar.
+- Precio/subtotales: fades de 120–160 ms.
+- Header/cart badge: microinteracción corta.
+- No se agregaron loops decorativos ni spring generalizado.
+
+### Validación pendiente
+
+La entrega sigue siendo source-only. Deben medirse en producción:
+- peso transferido de StoreBackdrop en primera visita a una página interna;
+- LCP de Home y ProductPage;
+- INP al abrir carrito;
+- GPU/paint en móviles de gama baja con backdrop-filter;
+- contraste visual de rail y controles sobre fotografías reales.
 
 ## ANTES
 
@@ -71,9 +105,9 @@ Hallazgos estructurales en V8.6.2:
 
 ### Imágenes
 
-- El fondo global ya no descarga hero-beach en todas las rutas.
-- Se eliminaron los preloads globales de hero-beach del index.html: catálogo/producto/checkout ya no bajan esa imagen por adelantado.
-- Hero es el propietario de la imagen LCP y la marca como eager/high priority.
+- V9.0 había retirado hero-beach de páginas internas; V9.1 recupera esa atmósfera mediante StoreBackdrop con prioridad baja y sin preload global.
+- Se mantienen eliminados los preloads globales de hero-beach del index.html.
+- Hero sigue siendo el propietario de la imagen LCP y la marca como eager/high priority.
 - ProductPage no duplica la imagen para generar un fondo blur.
 - Primera foto del producto: eager/high priority.
 - Resto del carrusel: lazy/low priority.
