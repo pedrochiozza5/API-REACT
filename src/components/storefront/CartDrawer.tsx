@@ -42,8 +42,8 @@ export function CartDrawer() {
         <div className="hide-scrollbar flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
           {!items.length ? <motion.div initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} className="grid min-h-[58vh] place-items-center text-center"><div className="max-w-[250px]">
             <div className="mx-auto grid h-20 w-20 place-items-center rounded-[28px] bg-[#184936] text-white"><ShoppingBag size={28}/></div>
-            <div className="mt-6 text-3xl font-black tracking-[-.05em]">La ronda está vacía.</div><p className="mt-2 text-xs font-semibold leading-relaxed text-black/40">Sumá un mate, una yerba o el producto que quieras.</p>
-            <motion.button whileHover={{y:-1}} whileTap={{scale:.985}} onClick={()=>setOpen(false)} className="mt-5 rounded-[14px] bg-[#174a36] px-6 py-3.5 text-xs font-black text-white">Seguir mirando</motion.button>
+            <div className="mt-6 text-3xl font-black tracking-[-.05em]">Tu ronda todavía está vacía.</div><p className="mt-2 text-xs font-semibold leading-relaxed text-black/40">Sumá un mate, una yerba o el producto que quieras.</p>
+            <motion.button whileHover={{y:-1}} whileTap={{scale:.985}} onClick={()=>{setOpen(false);navigate('/catalogo');}} className="mt-5 rounded-[14px] bg-[#174a36] px-6 py-3.5 text-xs font-black text-white">Explorar productos</motion.button>
           </div></motion.div> : <motion.div layout className="grid gap-6">
             {groups.map(group=><section key={group.id}>
               <div className="mb-2 flex items-center justify-between px-1"><div className="text-[9px] font-black uppercase tracking-[.16em] text-black/42">{group.label}</div><div className="text-[8px] font-bold text-black/30">{group.items.reduce((s,i)=>s+i.qty,0)} u.</div></div>
