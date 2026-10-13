@@ -10,6 +10,7 @@ import { ProductGallery } from '@/components/storefront/ProductGallery';
 import { ProductVariantSelector } from '@/components/storefront/ProductVariantSelector';
 import { BrandGlyph } from '@/components/storefront/BrandGlyph';
 import { StoreBackdrop } from '@/components/storefront/StoreBackdrop';
+import { ProductAtmosphere } from '@/components/storefront/ProductAtmosphere';
 import { Button } from '@/components/ui/button';
 import { apiGet } from '@/lib/api';
 import { useProductSeo } from '@/lib/useProductSeo';
@@ -112,11 +113,11 @@ export function ProductPage() {
   </main>;
 
   return <main className={`storefront-page ${yerbados ? 'storefront-page--yellow' : 'storefront-page--green'} min-h-screen overflow-x-hidden pt-[96px] sm:pt-[108px]`}>
-    <StoreBackdrop brand={brand} />
+    <StoreBackdrop brand={brand} mode="coastal" />
     <div className="storefront-content">
       <Header brand={brand} solid hideMobileDock />
 
-      <section className="relative w-full lg:grid lg:grid-cols-[minmax(0,1.45fr)_minmax(380px,.95fr)] lg:items-start lg:mx-auto lg:max-w-[1650px] lg:my-5 lg:overflow-hidden lg:rounded-[22px] lg:border lg:border-black/10 lg:shadow-[0_18px_60px_rgba(17,34,23,.08)]">
+      <section className="product-story-shell relative w-full lg:grid lg:grid-cols-[minmax(0,1.45fr)_minmax(380px,.95fr)] lg:items-start lg:mx-auto lg:max-w-[1650px] lg:overflow-hidden">
         <ProductGallery
           key={`${product.id}:${selected?.id ?? 'base'}`}
           images={gallery}
@@ -140,7 +141,7 @@ export function ProductPage() {
           initial={reduceMotion ? false : { opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: reduceMotion ? 0 : .38, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-20 border-t border-black/[.07] bg-[#fcfaf6] px-4 py-7 sm:px-6 lg:sticky lg:top-[108px] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:border-black/[.07] lg:bg-[#fcfaf6] lg:px-8 lg:py-10 xl:px-10"
+          className="product-purchase-rail relative z-20 border-t border-black/[.07] px-4 py-7 sm:px-6 lg:sticky lg:top-[108px] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:border-black/[.07] lg:px-8 lg:py-10 xl:px-10"
         >
           <div className="mx-auto w-full max-w-[560px] lg:mx-0 lg:max-w-[520px]">
             <div className="flex flex-wrap items-center gap-2">
@@ -219,6 +220,7 @@ export function ProductPage() {
         <div className="border-l-2 border-[#174a36] pl-5"><div className="text-[11px] font-black uppercase tracking-[.13em] text-[#194b35]">02 / Armá tu ronda</div><p className="mt-2 text-[13px] font-medium leading-relaxed text-[#4c5d52]">Combiná Bien Amargos y Bien Yerbados en un mismo carrito.</p></div>
         <div className="border-l-2 border-[#174a36] pl-5"><div className="text-[11px] font-black uppercase tracking-[.13em] text-[#194b35]">03 / Coordinamos</div><p className="mt-2 text-[13px] font-medium leading-relaxed text-[#4c5d52]">Finalizá el pedido por WhatsApp y acordamos la entrega.</p></div>
       </section>
+      <ProductAtmosphere brand={brand} />
       <Footer brand={brand} />
     </div>
 
