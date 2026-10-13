@@ -120,7 +120,7 @@ async function start() {
   app.get('/api/health', async (_request, reply) => {
     try {
       await dbHealth();
-      return { ok: true, db: true, version: '11.1.0', time: new Date().toISOString() };
+      return { ok: true, db: true, version: '11.2.0', time: new Date().toISOString() };
     } catch (error: any) {
       return reply.code(503).send({ ok: false, db: false, error: error.message });
     }
