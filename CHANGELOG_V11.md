@@ -1,3 +1,15 @@
+# Bien Amargos / Bien Yerbados — V11.2 SOURCE
+
+## V11.2 — Hover estable, fondos vivos y encuadre de categorías
+- Eliminado el overlay de foto alternativa en ProductCard que mezclaba dos fotos al hover. Una foto principal, siempre estable, con affordance discreto «Ver detalles».
+- Tonos naturales oliva/salvia/arena en las secciones de Home, con adaptación a Bien Yerbados; sin fondos blancos uniformes.
+- Nueva vista previa en Admin → Categorías: arrastrar la imagen, zoom 80–180%, posición X/Y, ajuste auto/cover/contain y restablecer.
+- Vista previa y tarjetas usan la misma función de encuadre; la foto original no se recorta ni se borra.
+- Base de datos: cuatro columnas aditivas con migración idempotente en `categories`; valores por defecto conservan la apariencia anterior.
+- Carrusel de favoritos: indicador de progreso sin renders React extra durante el drag.
+- Pruebas de regresión para hover, framing y fallbacks de categoría.
+- Instrucciones en `CATEGORY_IMAGES_V11_2.md`.
+
 # Bien Amargos / Bien Yerbados — V11.1 SOURCE
 
 ## V11.1 — UX de imágenes sin controles toscos
