@@ -1,8 +1,8 @@
-name: Validate and package V11 source
+name: Validate and package V11.1 source
 
 on:
   push:
-    branches: [v11-source]
+    branches: [v11.1-source]
   workflow_dispatch:
 
 jobs:
@@ -17,7 +17,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Run unit tests
@@ -34,7 +33,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bienamargos-v11-VISUAL-QA
+          name: bienamargos-v11.1-VISUAL-QA
           path: |
             test-results/*.png
             test-results/**/*.zip
@@ -60,11 +59,11 @@ jobs:
           test -f hostinger-source/server.js
           test -d hostinger-source/src
           test -d hostinger-source/server
-          node -e "const p=require('./hostinger-source/package.json'); if(p.version!=='11.0.0')process.exit(1)"
-      - name: Upload V11 Hostinger SOURCE artifact
+          node -e "const p=require('./hostinger-source/package.json'); if(p.version!=='11.1.0')process.exit(1)"
+      - name: Upload V11.1 Hostinger SOURCE artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bienamargos-v11-HOSTINGER-SOURCE
+          name: bienamargos-v11.1-HOSTINGER-SOURCE
           path: hostinger-source/**
           if-no-files-found: error
           compression-level: 6
