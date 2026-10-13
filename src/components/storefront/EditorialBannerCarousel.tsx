@@ -152,7 +152,7 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
                   {slide.subtitle && <p className="mt-3 max-w-xl text-[13px] font-semibold leading-relaxed text-white/78 sm:text-[15px]">{slide.subtitle}</p>}
                   {slide.ctaLabel && slide.href && <Link
                     to={slide.href}
-                    className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-[14px] bg-[#f7f3e9] px-5 text-[11px] font-black text-[#163625] transition duration-200 hover:-translate-y-px hover:bg-white"
+                    className="editorial-commerce-cta mt-5 inline-flex min-h-12 items-center gap-2 rounded-[12px] px-6 transition duration-200 hover:-translate-y-px"
                   >{slide.ctaLabel}<ArrowRight size={15}/></Link>}
                 </motion.div>}
               </AnimatePresence>
