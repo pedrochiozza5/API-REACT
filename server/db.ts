@@ -23,7 +23,7 @@ export async function dbHealth() {
 
 export async function ensureV9Schema() {
   // Runtime migration is idempotent and additive only.
-  const hasColumn = async (table:'products'|'product_variants', column:string) => {
+  const hasColumn = async (table:'products'|'product_variants'|'categories', column:string) => {
     const [rows] = await pool.query<any[]>(
       `SELECT 1 ok
        FROM information_schema.COLUMNS
@@ -56,6 +56,20 @@ export async function ensureV9Schema() {
   }
   if (!(await hasColumn('product_variants','wholesale_price'))) {
     await pool.query('ALTER TABLE product_variants ADD COLUMN wholesale_price DECIMAL(12,2) NULL AFTER compare_at_price');
+  }
+
+  // V11.2: non-destructive category crop controls; existing categories retain
+  // their previous auto-fit framing and 50/50 positioning until explicitly edited.
+  const categoryColumns: Array<[string,string]> = [
+    ['image_position_x','TINYINT UNSIGNED NOT NULL DEFAULT 50'],
+    ['image_position_y','TINYINT UNSIGNED NOT NULL DEFAULT 50'],
+    ['image_zoom','DECIMAL(3,2) NOT NULL DEFAULT 1.00'],
+    ['image_fit',"ENUM('auto','cover','contain') NOT NULL DEFAULT 'auto'"],
+  ];
+  for (const [column,definition] of categoryColumns) {
+    if (!(await hasColumn('categories',column))) {
+      await pool.query(`ALTER TABLE categories ADD COLUMN \`${column}\` ${definition}`);
+    }
   }
 
   const indexes:Array<[string,string,string]> = [
