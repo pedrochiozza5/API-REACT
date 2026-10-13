@@ -694,11 +694,11 @@ textarea.checkout-input{padding-top:12px;padding-bottom:12px}
 @media(max-width:767px){.v11-product-stage{min-height:0;height:min(67svh,640px)}.v11-product-stage__layout{padding:4px 0 0;flex-direction:column-reverse;gap:2px}.v11-product-stage__top{padding:14px 18px 4px;font-size:9px}.v11-product-thumbs{width:auto;min-height:68px;height:68px;max-height:none;overflow-x:auto;overflow-y:hidden;flex-direction:row;padding:2px 16px;gap:8px;scroll-snap-type:x proximity}.v11-product-thumb{height:60px;width:60px}.v11-product-stage__viewport{min-height:0}.v11-product-stage__bottom{padding:6px 14px 12px}}
 
 /* V11.3 · actual coastal photography, not repeated CSS wallpaper tiles. */
-.coastal-interlude{position:relative;padding:clamp(44px,7vw,90px) clamp(16px,5vw,80px);color:#fff}
-.coastal-interlude__inner{max-width:1560px;margin:auto;border:1px solid rgba(255,255,255,.32);border-radius:24px;padding:clamp(27px,4vw,56px);background:linear-gradient(115deg,rgba(12,48,34,.91),rgba(12,52,35,.82) 75%,rgba(13,51,36,.71));box-shadow:0 24px 64px rgba(7,28,18,.15)}
+.coastal-interlude{position:relative;padding:clamp(35px,5vw,66px) clamp(16px,5vw,80px);color:#fff}
+.coastal-interlude__inner{max-width:1340px;margin:auto;border:1px solid rgba(255,255,255,.32);border-radius:24px;padding:clamp(24px,3vw,42px);background:linear-gradient(115deg,rgba(12,48,34,.89),rgba(12,52,35,.79) 75%,rgba(13,51,36,.68));box-shadow:0 24px 64px rgba(7,28,18,.15)}
 .coastal-interlude--yellow .coastal-interlude__inner{background:linear-gradient(115deg,rgba(31,59,41,.91),rgba(72,76,47,.84) 75%,rgba(82,82,48,.72))}
 .coastal-interlude__eyebrow,.product-atmosphere__eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.84)}
-.coastal-interlude h2{max-width:900px;font-size:clamp(2.3rem,5.1vw,5.8rem);line-height:1.01;letter-spacing:-.06em;font-weight:900;margin-top:18px;text-wrap:balance}
+.coastal-interlude h2{max-width:900px;font-size:clamp(1.9rem,3.2vw,3.5rem);line-height:1.08;letter-spacing:-.05em;font-weight:900;margin-top:14px;text-wrap:balance}
 .coastal-interlude__lower{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-top:22px;flex-wrap:wrap}
 .coastal-interlude__lower p{max-width:560px;font-size:clamp(13px,1.4vw,16px);font-weight:650;color:rgba(255,255,255,.84)}
 .coastal-interlude__link,.product-atmosphere__link{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;border-radius:100px;border:1px solid rgba(255,255,255,.64);padding:0 18px;color:#fff;font-size:12px;font-weight:850;transition:background-color .2s,color .2s,transform .2s}
