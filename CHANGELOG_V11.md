@@ -1,3 +1,20 @@
+# Bien Amargos / Bien Yerbados — V11.1 SOURCE
+
+## V11.1 — UX de imágenes sin controles toscos
+
+- ProductCard elimina flechas y puntos. Desktop: segunda foto al hover, sin flash blanco. Mobile: foto limpia y tap para abrir ficha.
+- ProductGallery elimina flechas de navegación, mantiene swipe Embla y muestra miniaturas reales de fácil toque.
+- Miniatura activa visible también en galerías de hasta diez imágenes.
+- Lightbox convertido en diálogo Radix accesible con cierre por Escape y retorno correcto de foco.
+- FeaturedCarousel pasa a exploración horizontal por drag/swipe y teclado, sin flechas decorativas.
+- Banners editoriales con flechas sólo en desktop.
+- Acciones multimedia del administrador conservan 44px mínimo y se acomodan en columnas estrechas.
+- E2E amplía casos de una foto, diez fotos, transición de variantes, foco y hover secundario.
+
+Ver `UX_GALLERY_V11_1.md` para decisiones, limitaciones y matriz de QA.
+
+---
+
 # Bien Amargos / Bien Yerbados — V11 source candidate
 
 ## Correcciones funcionales
