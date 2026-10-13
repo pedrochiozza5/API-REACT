@@ -51,6 +51,27 @@ async function enrichProductList(products:any[]) {
     ).then(([rows]) => rows),
   ]);
 
+  // The list DTO must include each variant's first gallery images.
+  // Previously variants exposed only image_url, so swiping within a variant
+  // worked on its detail page but not reliably in the product cards.
+  const variantIds = variants.map(variant => Number(variant.id));
+  let variantImages:any[] = [];
+  if (variantIds.length) {
+    const holders = variantIds.map(() => '?').join(',');
+    const [rows] = await pool.query<any[]>(
+      `SELECT id, variantId, imageUrl, altText, sortOrder
+       FROM (
+         SELECT id, variant_id AS variantId, image_url AS imageUrl,
+                alt_text AS altText, sort_order AS sortOrder,
+                ROW_NUMBER() OVER (PARTITION BY variant_id ORDER BY sort_order,id) AS mediaRank
+         FROM product_variant_images WHERE variant_id IN (${holders})
+       ) ranked WHERE mediaRank <= 3 ORDER BY variantId, sortOrder, id`,
+      variantIds,
+    );
+    variantImages = rows;
+  }
+  const imagesByVariant = groupRows(variantImages, 'variantId');
+  for (const variant of variants) variant.images = imagesByVariant.get(Number(variant.id)) || [];
   const imagesByProduct = groupRows(images, 'productId');
   const variantsByProduct = groupRows(variants, 'productId');
 
@@ -61,7 +82,7 @@ async function enrichProductList(products:any[]) {
       .map(variant => Number(variant.price ?? product.price))
       .filter(Number.isFinite);
 
-    // Cards only need one alternate product image. The detail endpoint returns all media.
+    // Keep one alternate generic image; each variant can carry up to 3 media previews.
     const alternateImages = (imagesByProduct.get(Number(product.id)) || [])
       .filter(image => image.imageUrl && image.imageUrl !== product.imageUrl)
       .slice(0, 1);
