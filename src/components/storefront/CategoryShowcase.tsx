@@ -12,7 +12,6 @@ type Category=CategoryImagePlacement & {id:number;brandId:BrandId;name:string;sl
 
 
 export function CategoryShowcase({brand,categories}:{brand:BrandId;categories:Category[]}){
-  const en=brand==='enyerbados';
   const [emblaRef,emblaApi]=useEmblaCarousel({align:'start',containScroll:'trimSnaps',dragFree:true,breakpoints:{'(min-width: 1024px)':{active:false}}});
   const [canPrev,setCanPrev]=useState(false);const[canNext,setCanNext]=useState(false);
   const update=useCallback(()=>{if(!emblaApi)return;setCanPrev(emblaApi.canScrollPrev());setCanNext(emblaApi.canScrollNext());},[emblaApi]);
