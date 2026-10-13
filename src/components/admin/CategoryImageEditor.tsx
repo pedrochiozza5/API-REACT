@@ -1,5 +1,6 @@
 import { useRef, type PointerEvent } from 'react';
 import { Move, RotateCcw } from 'lucide-react';
+import type { BrandId } from '@/lib/types';
 import {
   categoryImagePresentation, categoryImageUrl,
   type CategoryImageFit, type CategoryImagePlacement,
@@ -8,7 +9,7 @@ import {
 type Editable = CategoryImagePlacement & {
   slug:string;
   name:string;
-  brandId:string;
+  brandId:BrandId;
   imageUrl:string;
   imagePositionX:number;
   imagePositionY:number;
