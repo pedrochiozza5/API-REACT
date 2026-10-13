@@ -15,10 +15,24 @@ test('multiple images stay ordered without repeating cover', () => {
   assert.deepEqual(productMediaUrls(product), ['/main.webp','/other.webp','/third.webp']);
 });
 
-test('variant cover leads, other galleries remain available', () => {
+test('variant cover and variant gallery are isolated from generic product media', () => {
   const product={imageUrl:'/main.webp',images:[{imageUrl:'/detail.webp'}]};
   const variant={imageUrl:'/blue.webp',images:[{imageUrl:'/blue-detail.webp'},{imageUrl:'/main.webp'}]};
-  assert.deepEqual(productMediaUrls(product,variant), ['/blue.webp','/main.webp','/blue-detail.webp','/detail.webp']);
+  assert.deepEqual(productMediaUrls(product,variant), ['/blue.webp','/blue-detail.webp','/main.webp']);
+});
+
+test('variant with its own gallery but no cover stays variant-specific', () => {
+  assert.deepEqual(productMediaUrls(
+    { imageUrl:'/generic.webp', images:[{imageUrl:'/generic-detail.webp'}] },
+    { imageUrl:null, images:[{imageUrl:'/red.webp'},{imageUrl:'/red-detail.webp'}] }
+  ), ['/red.webp','/red-detail.webp']);
+});
+
+test('variant without media inherits the generic gallery', () => {
+  assert.deepEqual(productMediaUrls(
+    {imageUrl:'/generic.webp',images:[{imageUrl:'/generic-detail.webp'}]},
+    {imageUrl:null,images:[]}
+  ), ['/generic.webp','/generic-detail.webp']);
 });
 
 test('missing media and whitespace do not produce blank slides', () => {
