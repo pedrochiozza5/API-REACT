@@ -1,4 +1,5 @@
 import useEmblaCarousel from 'embla-carousel-react';
+import { useEffect, useRef } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import type { BrandId, Product } from '@/lib/types';
@@ -7,6 +8,16 @@ import { AnimatedContent } from '@/components/motion/AnimatedContent';
 
 export function FeaturedCarousel({ brand, products, loading }: { brand: BrandId; products: Product[]; loading?: boolean }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start', containScroll: 'trimSnaps', dragFree: false });
+  const progressRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!emblaApi) return;
+    const sync = () => {
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${Math.max(0,Math.min(1,emblaApi.scrollProgress()))})`;
+    };
+    sync();
+    emblaApi.on('scroll', sync).on('select', sync).on('reInit', sync);
+    return () => { emblaApi.off('scroll', sync).off('select', sync).off('reInit', sync); };
+  }, [emblaApi]);
   const single = !loading && products.length === 1;
   if (!loading && products.length === 0) return null;
 
@@ -26,7 +37,12 @@ export function FeaturedCarousel({ brand, products, loading }: { brand: BrandId;
             {loading ? Array.from({ length: 4 }).map((_, i) => <div key={i} className="min-w-0 flex-[0_0_82%] pl-3 sm:flex-[0_0_48%] md:flex-[0_0_32%] lg:flex-[0_0_25%] xl:flex-[0_0_20%]"><div className="aspect-[.72] animate-pulse rounded-[28px] bg-white/55" /></div>) : products.map((p) => <div key={p.id} className={`${single ? 'flex-[0_0_100%] max-w-[430px]' : 'flex-[0_0_82%] sm:flex-[0_0_48%] md:flex-[0_0_32%] lg:flex-[0_0_25%] xl:flex-[0_0_20%]'} min-w-0 pl-3`}><ProductCard product={p} /></div>)}
           </div>
         </div>
-        <div className="mt-8 flex items-center justify-between gap-3"><Link to={`/catalogo?brand=${brand}`} className="inline-flex items-center gap-2 rounded-full border border-black/9 bg-white/70 px-4 py-2.5 text-xs font-black transition hover:bg-white">Catálogo completo <ArrowRight size={14} /></Link><div className="text-[11px] font-semibold text-[#526257] sm:hidden">Deslizá para explorar</div></div>
+        <div className="mt-8 flex items-center justify-between gap-3"><Link to={`/catalogo?brand=${brand}`} className="inline-flex items-center gap-2 rounded-full border border-black/9 bg-white/70 px-4 py-2.5 text-xs font-black transition hover:bg-white">Catálogo completo <ArrowRight size={14} /></Link><div className="flex w-[135px] shrink-0 flex-col gap-2 sm:w-[200px]" aria-label="Progreso del carrusel">
+  <span className="text-right text-[11px] font-semibold text-[#365743]">Deslizá para explorar</span>
+  <div className="h-[3px] overflow-hidden rounded-full bg-[#174a36]/15" aria-hidden="true">
+    <div ref={progressRef} className="h-full w-full origin-left scale-x-0 rounded-full bg-[#174a36] will-change-transform" />
+  </div>
+</div></div>
       </div>
     </section>
   );
