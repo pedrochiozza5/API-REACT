@@ -116,12 +116,14 @@ export function ProductPage() {
     <div className="storefront-content">
       <Header brand={brand} solid hideMobileDock />
 
-      <section className="relative w-full lg:grid lg:grid-cols-[minmax(0,1.65fr)_minmax(380px,.55fr)] lg:items-start">
+      <section className="relative w-full lg:grid lg:grid-cols-[minmax(0,1.45fr)_minmax(380px,.95fr)] lg:items-start lg:mx-auto lg:max-w-[1650px] lg:my-5 lg:overflow-hidden lg:rounded-[22px] lg:border lg:border-black/10 lg:shadow-[0_18px_60px_rgba(17,34,23,.08)]">
         <ProductGallery
+          key={`${product.id}:${selected?.id ?? 'base'}`}
           images={gallery}
           fallback={fallback}
           recoveryFallback={recoveryFallback}
           name={product.name}
+          brand={brand}
           categoryName={product.categoryName}
           zoom={imageZoom}
           positionX={imagePositionX}
@@ -138,11 +140,11 @@ export function ProductPage() {
           initial={reduceMotion ? false : { opacity: 0, x: 16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: reduceMotion ? 0 : .38, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-20 border-t border-black/[.07] bg-[#fbf8f1] px-4 py-7 sm:px-6 lg:sticky lg:top-[108px] lg:min-h-[calc(100svh-108px)] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:border-black/[.07] lg:bg-[#fbf8f1] lg:px-8 lg:py-10 xl:px-10"
+          className="relative z-20 border-t border-black/[.07] bg-[#fcfaf6] px-4 py-7 sm:px-6 lg:sticky lg:top-[108px] lg:overflow-y-auto lg:border-l lg:border-t-0 lg:border-black/[.07] lg:bg-[#fcfaf6] lg:px-8 lg:py-10 xl:px-10"
         >
           <div className="mx-auto w-full max-w-[560px] lg:mx-0 lg:max-w-[520px]">
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 font-mono-ui text-[10px] font-semibold uppercase tracking-[.18em] text-black/42">
+              <div className="inline-flex items-center gap-2 font-mono-ui text-[10px] font-semibold uppercase tracking-[.18em] text-black/65">
                 <BrandGlyph kind={yerbados ? 'yerba' : 'mate'} className="h-4 w-4" />
                 {yerbados ? 'Bien Yerbados' : 'Bien Amargos'} · {product.categoryName || 'Selección'}
               </div>
@@ -162,11 +164,11 @@ export function ProductPage() {
                   className="text-[clamp(1.95rem,6vw,2.65rem)] font-black tracking-[-.045em] text-[#172119]"
                 >{money(price)}</motion.div>
               </AnimatePresence>
-              {hasDiscount && <div className="text-sm font-bold text-black/32 line-through">{money(compare)}</div>}
+              {hasDiscount && <div className="text-sm font-bold text-black/55 line-through">{money(compare)}</div>}
             </div>
             {hasDiscount && <div className="mt-1 text-[11px] font-black uppercase tracking-[.1em] text-[#a9472c]">Ahorrás {money(compare - price)}</div>}
 
-            {product.shortDescription && <p className="mt-4 max-w-[46ch] text-[13px] font-semibold leading-[1.65] text-black/54">{product.shortDescription}</p>}
+            {product.shortDescription && <p className="mt-4 max-w-[46ch] text-[13px] font-semibold leading-[1.65] text-black/65">{product.shortDescription}</p>}
 
             <div className="mt-4 flex flex-wrap items-center gap-2 border-y border-black/[.07] py-3">
               <span className={`inline-flex items-center gap-1.5 text-[11px] font-black ${soldOut ? 'text-red-600' : selected && stock <= 3 ? 'text-amber-700' : 'text-emerald-700'}`}>
@@ -174,7 +176,7 @@ export function ProductPage() {
                 {soldOut ? 'Agotado' : !trackStock ? 'Disponible' : selected && stock <= 3 ? `Últimas ${stock}` : 'Disponible'}
               </span>
               <span className="h-1 w-1 rounded-full bg-black/15" />
-              <span className="font-mono-ui text-[10px] uppercase tracking-[.12em] text-black/28">SKU {selected?.sku || product.sku}</span>
+              <span className="font-mono-ui text-[10px] uppercase tracking-[.12em] text-black/55">SKU {selected?.sku || product.sku}</span>
             </div>
 
             <ProductVariantSelector
@@ -212,6 +214,11 @@ export function ProductPage() {
         </motion.aside>
       </section>
 
+      <section className="mx-auto grid max-w-[1300px] gap-3 px-5 py-14 sm:grid-cols-3 sm:px-8" aria-label="Cómo comprar">
+        <div className="border-l-2 border-[#174a36] pl-5"><div className="text-[11px] font-black uppercase tracking-[.13em] text-[#194b35]">01 / Elegí</div><p className="mt-2 text-[13px] font-medium leading-relaxed text-[#4c5d52]">Encontrá tus productos favoritos y seleccioná sus opciones.</p></div>
+        <div className="border-l-2 border-[#174a36] pl-5"><div className="text-[11px] font-black uppercase tracking-[.13em] text-[#194b35]">02 / Armá tu ronda</div><p className="mt-2 text-[13px] font-medium leading-relaxed text-[#4c5d52]">Combiná Bien Amargos y Bien Yerbados en un mismo carrito.</p></div>
+        <div className="border-l-2 border-[#174a36] pl-5"><div className="text-[11px] font-black uppercase tracking-[.13em] text-[#194b35]">03 / Coordinamos</div><p className="mt-2 text-[13px] font-medium leading-relaxed text-[#4c5d52]">Finalizá el pedido por WhatsApp y acordamos la entrega.</p></div>
+      </section>
       <Footer brand={brand} />
     </div>
 
