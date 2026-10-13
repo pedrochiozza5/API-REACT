@@ -1,6 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowDown, ArrowUp, Image, Pencil, Plus, X } from 'lucide-react';
+import { ArrowDown, ArrowUp, Pencil, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { apiGet, apiSend } from '@/lib/api';
 import type { BrandId } from '@/lib/types';
