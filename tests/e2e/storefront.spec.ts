@@ -59,7 +59,7 @@ test.beforeEach(async ({ page }) => {
     else if (pathname === '/api/products/mate-galeria') data = manyImageProduct;
     else if (pathname === '/api/products') data = [product,variantProduct];
     else if (pathname === '/api/categories') data = [{ id: 1, brandId: 'amargos', name: 'Mates', slug: 'mates', imageUrl:'/brand/repisa.webp', imageFit:'cover', imageZoom:1.35, imagePositionX:25, imagePositionY:75 }];
-    else if (pathname === '/api/banners') data = [];
+    else if (pathname === '/api/banners') data = [{ id: 777, title: 'Conocé el Mate Indio', eyebrow: 'Un clásico', subtitle: 'Nuestro elegido', imageUrl: '/brand/repisa.webp', ctaLabel: 'Ver producto', href: '/producto/mate-indio', sortOrder: 1 }];
     else if (pathname === '/api/faqs') data = [];
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(data) });
   });
@@ -75,7 +75,9 @@ test('desktop Home has one edge-to-edge hero carousel', async ({ page }) => {
   expect(bounds).not.toBeNull();
   expect(Math.abs(bounds!.x)).toBeLessThanOrEqual(2);
   expect(Math.abs(bounds!.width - 1440)).toBeLessThanOrEqual(2);
-  await expect(carousel.getByRole('button', { name: 'Banner siguiente' })).toBeVisible();
+  await expect(carousel.getByRole('button', { name: 'Banner siguiente' })).toHaveCount(0);
+  await expect(carousel.getByRole('button', { name: /^Ir al banner/ })).toHaveCount(0);
+  await expect(carousel.getByRole('button', { name: 'Banner anterior' })).toHaveCount(0);
   await page.screenshot({ path: 'test-results/home-desktop.png', fullPage: true });
 });
 
@@ -85,7 +87,8 @@ test('mobile Yerbados maintains an accessible, overflow-free carousel', async ({
   const carousel = page.getByRole('region', { name: 'Historias destacadas' });
   await expect(carousel).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Yerba con presencia.' })).toBeVisible();
-  await expect(carousel.getByRole('button', { name: 'Banner siguiente' })).toBeHidden();
+  await expect(carousel.getByRole('button', { name: 'Banner siguiente' })).toHaveCount(0);
+  await expect(carousel.getByRole('button', { name: /^Ir al banner/ })).toHaveCount(0);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(2);
   await page.screenshot({ path: 'test-results/home-mobile.png', fullPage: true });
@@ -211,34 +214,51 @@ test('category cards use the framing configured by the admin',async({page})=>{
 });
 
 
-test('white storefront background preserves the full-width photographic hero',async({page})=>{
+test('warm storefront background preserves the full-width photographic hero',async({page})=>{
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/');
   await expect(page.locator('.storefront-backdrop img')).toHaveCount(0);
-  await expect(page.locator('.home-clean-flow')).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(page.locator('#favoritos')).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(page.locator('.home-clean-flow')).toHaveCSS('background-color','rgb(245, 240, 231)');
+  await expect(page.locator('#favoritos')).toHaveCSS('background-color','rgb(245, 240, 231)');
   await expect(page.getByRole('region',{name:'Historias destacadas'})).toBeVisible();
   await page.screenshot({path:'test-results/white-home-desktop.png',fullPage:true});
 });
 
-test('ProductPage has white surroundings and visible product photography',async({page})=>{
+test('ProductPage has warm surroundings and visible product photography',async({page})=>{
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/producto/mate-de-prueba');
   await expect(page.locator('.storefront-backdrop img')).toHaveCount(0);
-  await expect(page.locator('.storefront-backdrop')).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(page.locator('.storefront-backdrop')).toHaveCSS('background-color','rgb(245, 240, 231)');
   await expect(page.locator('.product-purchase-rail')).toBeVisible();
   const image=page.locator('[aria-label^="Galería de"] .v11-product-stage__slide').first().locator('img').first();
   await expect.poll(()=>image.evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth>0)).toBeTruthy();
   await page.screenshot({path:'test-results/white-product-desktop.png',fullPage:true});
 });
 
-test('Yerbados mobile stays white with readable CTA',async({page})=>{
+test('Yerbados mobile has warm surfaces and readable CTA',async({page})=>{
   await page.setViewportSize({width:390,height:844});
   await page.goto('/yerbados');
   await expect(page.locator('.storefront-backdrop img')).toHaveCount(0);
-  await expect(page.locator('.home-clean-flow')).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(page.locator('.home-clean-flow')).toHaveCSS('background-color','rgb(245, 240, 231)');
   await expect(page.getByRole('heading',{name:'Un buen mate merece una buena yerba.'})).toBeVisible();
   await expect(page.locator('a.editorial-commerce-cta').first()).toHaveCSS('color','rgb(255, 255, 255)');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth)).toBeLessThanOrEqual(2);
   await page.screenshot({path:'test-results/white-yerbados-mobile.png',fullPage:true});
+});
+
+test('custom banner image and CTA navigate to a product route without visible carousel controls', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  const carousel = page.getByRole('region', { name: /Historias destacadas/ });
+  await expect(carousel.getByRole('button')).toHaveCount(0);
+  const carouselBox = await carousel.boundingBox();
+  expect(carouselBox).not.toBeNull();
+  await carousel.hover();
+  await carousel.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(carousel.getByRole('heading', { name: 'Conocé el Mate Indio' })).toBeVisible();
+  const productLink = carousel.getByRole('link', { name: 'Abrir Conocé el Mate Indio' });
+  await expect(productLink).toHaveAttribute('href', '/producto/mate-indio');
+  await productLink.click();
+  await expect(page).toHaveURL(/\/producto\/mate-indio$/);
 });
