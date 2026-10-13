@@ -11,6 +11,28 @@ const product = {
   images: [{ imageUrl: '/brand/hero-beach.webp' }, { imageUrl: '/brand/chicos.webp' }],
 };
 
+const variantProduct = {
+  ...product, id: 91, slug: 'mate-variantes', name: 'Mate con variantes',
+  hasVariants: true,
+  imageUrl:'/brand/bien-amargos-mark.png',
+  images:[{imageUrl:'/brand/varios.webp'}],
+  variants:[
+    {id: 111, name:'Color', value:'Negro', colorHex:'#202020', sku:'MAT-NEG', price:30000,
+     trackStock:true,stockQty:10,active:true,sortOrder:1,
+     imageUrl:'/brand/repisa.webp',images:[{imageUrl:'/brand/chicos.webp'}]},
+    {id: 112, name:'Color', value:'Marrón', colorHex:'#6b391c', sku:'MAT-MAR', price:32000,
+     trackStock:true,stockQty:5,active:true,sortOrder:2,
+     imageUrl:'/brand/yerbas-stock.webp',images:[{imageUrl:'/brand/hero-beach.webp'}]},
+  ],
+};
+
+async function assertImageIsVisible(page: import('@playwright/test').Page, expected: string) {
+  const mainImage=page.locator('[aria-label^="Galería de"] .v11-product-stage__slide').first().locator('img').first();
+  await expect(mainImage).toHaveAttribute('src',expected);
+  await expect.poll(async()=>mainImage.evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth>0)).toBeTruthy();
+  await expect.poll(async()=>mainImage.evaluate((img:HTMLImageElement)=>Number.parseFloat(getComputedStyle(img).opacity))).toBeGreaterThan(.9);
+}
+
 test.beforeEach(async ({ page }) => {
   // Mock the API: no production database, no real customer/orders/stock changes.
   await page.route('**/api/**', async route => {
@@ -19,7 +41,8 @@ test.beforeEach(async ({ page }) => {
     let data: unknown = [];
     if (pathname === '/api/store-settings') data = { settings: {}, brands: [] };
     else if (pathname === '/api/products/mate-de-prueba') data = product;
-    else if (pathname === '/api/products') data = [product];
+    else if (pathname === '/api/products/mate-variantes') data = variantProduct;
+    else if (pathname === '/api/products') data = [product,variantProduct];
     else if (pathname === '/api/categories') data = [{ id: 1, brandId: 'amargos', name: 'Mates', slug: 'mates' }];
     else if (pathname === '/api/banners') data = [];
     else if (pathname === '/api/faqs') data = [];
@@ -63,4 +86,33 @@ test('mobile product preserves images and confirms add-to-cart without checkout'
   await page.getByRole('button', { name: /^Agregar/ }).click();
   await expect(page.getByText('Agregado a tu ronda')).toBeVisible();
   await page.screenshot({ path: 'test-results/product-mobile.png', fullPage: true });
+});
+
+test('switching variants after changing images never hides a valid product image', async ({page}) => {
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/producto/mate-variantes');
+  await page.getByRole('button',{name:'Negro',exact:false}).click();
+  await assertImageIsVisible(page,'/brand/repisa.webp');
+  await page.getByRole('button',{name:'Imagen siguiente'}).click();
+  await page.getByRole('button',{name:'Marrón',exact:false}).click();
+  await assertImageIsVisible(page,'/brand/yerbas-stock.webp');
+  await page.getByRole('button',{name:'Negro',exact:false}).click();
+  await assertImageIsVisible(page,'/brand/repisa.webp');
+  // This is the formerly broken cached-image transition.
+  await page.getByRole('button',{name:'Marrón',exact:false}).click();
+  await assertImageIsVisible(page,'/brand/yerbas-stock.webp');
+});
+
+test('product card changes preview variants without retaining a stale media index', async ({page}) => {
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/catalogo?brand=amargos');
+  const card=page.locator('article.product-card-v5').filter({hasText:'Mate con variantes'});
+  await expect(card).toBeVisible();
+  await card.getByRole('button',{name:'Imagen siguiente'}).click();
+  await card.getByRole('button',{name:'Vista Marrón'}).click();
+  const image=card.locator('[data-image-url]').first();
+  await expect(image).toHaveAttribute('src','/brand/yerbas-stock.webp');
+  await expect.poll(async()=>image.evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth>0&&getComputedStyle(img).opacity!=='0')).toBeTruthy();
+  await card.getByRole('button',{name:'Vista Negro'}).click();
+  await expect(image).toHaveAttribute('src','/brand/repisa.webp');
 });
