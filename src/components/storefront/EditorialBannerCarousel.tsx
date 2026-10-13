@@ -1,11 +1,12 @@
-import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, type MouseEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useQuery } from '@tanstack/react-query';
 import type { BrandId } from '@/lib/types';
 import { apiGet } from '@/lib/api';
+import { getBannerDestination } from '@/lib/bannerLinks';
 
 type StoreSettings = { settings: Record<string, string> };
 
@@ -29,6 +30,18 @@ const fallback: Banner[] = [
   { id: -2, brandId: null, eyebrow: 'Colección', title: 'Todo para tu ronda.', subtitle: 'Mates, termos, bombillas y combos.', imageUrl: '/brand/repisa.webp', ctaLabel: 'Explorar', href: '/catalogo?brand=amargos', sortOrder: 20 },
   { id: -3, brandId: null, eyebrow: 'Bien Yerbados', title: 'La yerba también elige.', subtitle: 'Una selección para acompañar cada mate.', imageUrl: '/brand/yerbas-stock.webp', ctaLabel: 'Ver Yerbados', href: '/yerbados', sortOrder: 30 },
 ];
+
+function BannerLink({ href, label, className, children, tabIndex, onClick }: {
+  href: string; label: string; className: string; children?: ReactNode;
+  tabIndex: number; onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
+}) {
+  const destination = getBannerDestination(href);
+  if (!destination) return null;
+  const attrs = { className, 'aria-label': label, tabIndex, onClick };
+  return destination.kind === 'internal'
+    ? <Link to={destination.href} {...attrs}>{children}</Link>
+    : <a href={destination.href} target="_blank" rel="noopener noreferrer" {...attrs}>{children}</a>;
+}
 
 export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
   const reduceMotion = useReducedMotion();
@@ -113,10 +126,18 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
     onMouseLeave={() => setHovered(false)}
     onFocusCapture={() => setHovered(true)}
     onBlurCapture={() => setHovered(false)}
+    tabIndex={0}
+    aria-roledescription="carrusel"
+    aria-label="Historias destacadas; deslizá para cambiar de banner"
+    onKeyDown={event => {
+      if (event.target !== event.currentTarget) return;
+      if (event.key === 'ArrowLeft') { event.preventDefault(); emblaApi?.scrollPrev(); }
+      if (event.key === 'ArrowRight') { event.preventDefault(); emblaApi?.scrollNext(); }
+    }}
   >
     <div ref={emblaRef} className="overflow-hidden">
       <div className="flex touch-pan-y">
-        {slides.map((slide, index) => <article key={slide.id} className="relative min-w-0 flex-[0_0_100%]" style={{
+        {slides.map((slide, index) => <article key={slide.id} className="relative min-w-0 flex-[0_0_100%]" aria-roledescription="diapositiva" aria-label={`${index + 1} de ${slides.length}: ${slide.title}`} style={{
           '--banner-position-desktop': slide.objectPositionDesktop || '50% 50%',
           '--banner-position-mobile': slide.objectPositionMobile || slide.objectPositionDesktop || '50% 50%',
         } as CSSProperties}>
@@ -135,9 +156,16 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
 
 
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,14,10,.48)_0%,rgba(8,14,10,.16)_40%,transparent_68%)] sm:bg-[linear-gradient(90deg,rgba(8,14,10,.42)_0%,rgba(8,14,10,.12)_38%,transparent_66%)]"/>
-            <div className="absolute inset-x-0 bottom-0 h-[36%] bg-gradient-to-t from-black/38 via-black/10 to-transparent"/>
+            <div className="absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-black/55 via-black/12 to-transparent"/>
+            {slide.href && <BannerLink
+              href={slide.href}
+              label={`Abrir ${slide.title}`}
+              className="absolute inset-0 z-[5] block focus-visible:outline-4 focus-visible:outline-offset-[-4px] focus-visible:outline-amber-300"
+              tabIndex={selected === index ? 0 : -1}
+              onClick={event => { if (emblaApi && !emblaApi.clickAllowed()) event.preventDefault(); }}
+            />}
 
-            <div className="relative z-10 flex h-full items-end px-5 pb-8 sm:px-10 sm:pb-12 lg:px-16 lg:pb-14 xl:px-20">
+            <div className="pointer-events-none relative z-10 flex h-full items-end px-5 pb-8 sm:px-10 sm:pb-12 lg:px-16 lg:pb-14 xl:px-20">
               <AnimatePresence mode="wait">
                 {selected === index && <motion.div
                   key={`${slide.id}-${selected}`}
@@ -150,10 +178,13 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
                   {slide.eyebrow && <div className="font-mono-ui text-[10px] font-semibold uppercase tracking-[.24em] text-white/64 sm:text-[11px]">{slide.eyebrow}</div>}
                   <h2 className="mt-2 max-w-[720px] text-[clamp(2.4rem,5.2vw,5.8rem)] font-black leading-[.9] tracking-[-.06em]">{slide.title}</h2>
                   {slide.subtitle && <p className="mt-3 max-w-xl text-[13px] font-semibold leading-relaxed text-white/78 sm:text-[15px]">{slide.subtitle}</p>}
-                  {slide.ctaLabel && slide.href && <Link
-                    to={slide.href}
-                    className="editorial-commerce-cta mt-5 inline-flex min-h-12 items-center gap-2 rounded-[12px] px-6 transition duration-200 hover:-translate-y-px"
-                  >{slide.ctaLabel}<ArrowRight size={15}/></Link>}
+                  {slide.ctaLabel && slide.href && <BannerLink
+                    href={slide.href}
+                    label={slide.ctaLabel}
+                    tabIndex={selected === index ? 0 : -1}
+                    onClick={event => { if (emblaApi && !emblaApi.clickAllowed()) event.preventDefault(); }}
+                    className="editorial-commerce-cta pointer-events-auto relative z-20 mt-5 inline-flex min-h-12 items-center gap-2 rounded-[12px] px-6 transition duration-200 hover:-translate-y-px"
+                  >{slide.ctaLabel}<ArrowRight size={15}/></BannerLink>}
                 </motion.div>}
               </AnimatePresence>
             </div>
@@ -162,31 +193,5 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
       </div>
     </div>
 
-    {slides.length > 1 && <>
-      <button
-        type="button"
-        aria-label="Banner anterior"
-        onClick={() => emblaApi?.scrollPrev()}
-        className="absolute left-0 top-1/2 z-20 hidden h-12 w-11 -translate-y-1/2 place-items-center bg-black/62 text-white transition hover:bg-black/78 sm:grid sm:h-14 sm:w-11"
-      ><ArrowLeft size={18}/></button>
-
-      <button
-        type="button"
-        aria-label="Banner siguiente"
-        onClick={() => emblaApi?.scrollNext()}
-        className="absolute right-0 top-1/2 z-20 hidden h-12 w-11 -translate-y-1/2 place-items-center bg-black/62 text-white transition hover:bg-black/78 sm:grid sm:h-14 sm:w-11"
-      ><ArrowRight size={18}/></button>
-
-      <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/28 px-2.5 py-2 backdrop-blur-sm sm:bottom-4">
-        {slides.map((slide, index) => <button
-          type="button"
-          key={slide.id}
-          onClick={() => emblaApi?.scrollTo(index)}
-          aria-label={`Ir al banner ${index + 1}`}
-          aria-current={selected === index ? 'true' : undefined}
-          className="grid h-11 w-11 place-items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-        ><span aria-hidden="true" className={`h-1.5 rounded-full transition-all duration-200 ${selected === index ? 'w-7 bg-white' : 'w-2 bg-white/60'}`}/></button>)}
-      </div>
-    </>}
   </section>;
 }
