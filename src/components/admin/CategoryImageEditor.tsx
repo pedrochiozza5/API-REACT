@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, type PointerEvent } from 'react';
 import { Move, RotateCcw } from 'lucide-react';
 import {
   categoryImagePresentation, categoryImageUrl,
@@ -22,7 +22,7 @@ export function CategoryImageEditor({value,disabled=false,onChange}:Props){
   const drag=useRef<{x:number;y:number;positionX:number;positionY:number}|null>(null);
   const {fit,style}=categoryImagePresentation(value);
 
-  function handleMove(event:React.PointerEvent<HTMLDivElement>){
+  function handleMove(event:PointerEvent<HTMLDivElement>){
     const start=drag.current;
     if(!start || disabled)return;
     const rect=event.currentTarget.getBoundingClientRect();
