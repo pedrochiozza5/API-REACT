@@ -70,9 +70,7 @@ test('mobile Yerbados maintains an accessible, overflow-free carousel', async ({
   const carousel = page.getByRole('region', { name: 'Historias destacadas' });
   await expect(carousel).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Yerba con presencia.' })).toBeVisible();
-  const button = carousel.getByRole('button', { name: 'Banner siguiente' });
-  const bounds = await button.boundingBox();
-  expect(bounds?.width).toBeGreaterThanOrEqual(44);
+  await expect(carousel.getByRole('button', { name: 'Banner siguiente' })).toBeHidden();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(2);
   await page.screenshot({ path: 'test-results/home-mobile.png', fullPage: true });
@@ -82,7 +80,8 @@ test('mobile product preserves images and confirms add-to-cart without checkout'
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/producto/mate-de-prueba');
   await expect(page.getByRole('heading', { name: 'Mate de prueba' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Imagen siguiente' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ver imagen 2 de 3' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Imagen siguiente' })).toHaveCount(0);
   await page.getByRole('button', { name: /^Agregar/ }).click();
   await expect(page.getByText('Agregado a tu ronda')).toBeVisible();
   await page.screenshot({ path: 'test-results/product-mobile.png', fullPage: true });
@@ -93,7 +92,7 @@ test('switching variants after changing images never hides a valid product image
   await page.goto('/producto/mate-variantes');
   await page.getByRole('button',{name:'Negro',exact:false}).click();
   await assertImageIsVisible(page,'/brand/repisa.webp');
-  await page.getByRole('button',{name:'Imagen siguiente'}).click();
+  await page.getByRole('button',{name:'Ver imagen 2 de 2'}).click();
   await page.getByRole('button',{name:'Marrón',exact:false}).click();
   await assertImageIsVisible(page,'/brand/yerbas-stock.webp');
   await page.getByRole('button',{name:'Negro',exact:false}).click();
@@ -108,11 +107,46 @@ test('product card changes preview variants without retaining a stale media inde
   await page.goto('/catalogo?brand=amargos');
   const card=page.locator('article.product-card-v5').filter({hasText:'Mate con variantes'});
   await expect(card).toBeVisible();
-  await card.getByRole('button',{name:'Imagen siguiente'}).click();
+  await expect(card.getByRole('button',{name:'Imagen siguiente'})).toHaveCount(0);
+  await card.hover();
   await card.getByRole('button',{name:'Vista Marrón'}).click();
   const image=card.locator('[data-image-url]').first();
   await expect(image).toHaveAttribute('src','/brand/yerbas-stock.webp');
   await expect.poll(async()=>image.evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth>0&&getComputedStyle(img).opacity!=='0')).toBeTruthy();
   await card.getByRole('button',{name:'Vista Negro'}).click();
   await expect(image).toHaveAttribute('src','/brand/repisa.webp');
+});
+
+
+test('gallery thumbnails replace arrows and remain usable with keyboard', async ({page}) => {
+  await page.setViewportSize({width:1280,height:900});
+  await page.goto('/producto/mate-de-prueba');
+  const gallery=page.getByRole('region',{name:'Galería de Mate de prueba'});
+  await expect(gallery.getByRole('button',{name:'Imagen anterior'})).toHaveCount(0);
+  await expect(gallery.getByRole('button',{name:'Imagen siguiente'})).toHaveCount(0);
+  await gallery.getByRole('button',{name:'Ver imagen 3 de 3'}).click();
+  await expect(gallery.getByRole('button',{name:'Ver imagen 3 de 3'})).toHaveAttribute('aria-current','true');
+  await gallery.focus();
+  await gallery.press('ArrowLeft');
+  await expect(gallery.getByRole('button',{name:'Ver imagen 2 de 3'})).toHaveAttribute('aria-current','true');
+});
+
+test('lightbox uses accessible dialog and restores focus when closed', async ({page}) => {
+  await page.goto('/producto/mate-de-prueba');
+  const expand=page.getByRole('button',{name:'Ampliar imagen'});
+  await expand.click();
+  await expect(page.getByRole('dialog',{name:/Imagen ampliada|Mate de prueba/})).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(expand).toBeFocused();
+});
+
+test('catalog product card navigates on tap without media arrows', async ({page}) => {
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/catalogo?brand=amargos');
+  const card=page.locator('article.product-card-v5').filter({hasText:'Mate de prueba'});
+  await expect(card.getByRole('button',{name:'Imagen siguiente'})).toHaveCount(0);
+  await expect(card.getByRole('button',{name:'Imagen anterior'})).toHaveCount(0);
+  await card.getByRole('link',{name:'Ver Mate de prueba'}).click();
+  await expect(page).toHaveURL(/\/producto\/mate-de-prueba/);
 });
