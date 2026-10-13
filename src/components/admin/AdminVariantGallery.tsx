@@ -47,13 +47,13 @@ export function AdminVariantGallery({mode = 'variant',imageUrl,imagesText,disabl
     {images.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">
       {images.map((url,index)=><article key={url} className="overflow-hidden rounded-[14px] border border-black/10 bg-[#f4f3ed]">
         <div className="relative aspect-[5/4] bg-white/80 p-2"><img src={url} alt={`Foto ${index+1} de esta variante`} loading="lazy" className="h-full w-full object-contain"/></div>
-        <div className="flex items-center justify-between gap-2 border-t border-black/10 p-2">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-black/10 p-2">
           <span className="text-[11px] font-bold text-[#526157]">Foto {index+1}</span>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <button type="button" disabled={disabled} onClick={()=>makeCover(url)} aria-label={`Hacer principal foto ${index+1}`} title="Hacer principal" className="admin-image-action text-[#174a36]"><Star size={16}/></button>
             <button type="button" disabled={disabled||index===0} onClick={()=>move(index,-1)} aria-label={`Mover antes foto ${index+1}`} className="admin-image-action"><ArrowUp size={16}/></button>
             <button type="button" disabled={disabled||index===images.length-1} onClick={()=>move(index,1)} aria-label={`Mover después foto ${index+1}`} className="admin-image-action"><ArrowDown size={16}/></button>
-            <button type="button" disabled={disabled} onClick={()=>changeImages(images.filter(x=>x!==url))} aria-label={`Desasociar foto ${index+1}`} title="Desasociar; no borra el archivo" className="admin-image-action text-red-700"><Trash2 size={16}/></button>
+            <button type="button" disabled={disabled} onClick={()=>changeImages(images.filter(x=>x!==url))} aria-label={`Desasociar foto ${index+1} sin borrar el archivo`} title="Desasociar; no borra el archivo" className="admin-image-action text-red-700"><Trash2 size={16}/></button>
           </div>
         </div>
       </article>)}
