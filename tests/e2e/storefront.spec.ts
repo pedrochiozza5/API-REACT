@@ -26,6 +26,18 @@ const variantProduct = {
   ],
 };
 
+
+const singleImageProduct = {
+  ...product, id: 201, slug: 'mate-unico', name: 'Mate única foto',
+  imageUrl: '/brand/repisa.webp', images: [],
+};
+
+const manyImageProduct = {
+  ...product, id: 202, slug: 'mate-galeria', name: 'Mate diez fotos',
+  imageUrl: '/brand/repisa.webp?photo=1',
+  images: Array.from({length: 9}, (_, i) => ({imageUrl: `/brand/repisa.webp?photo=${i + 2}`})),
+};
+
 async function assertImageIsVisible(page: import('@playwright/test').Page, expected: string) {
   const mainImage=page.locator('[aria-label^="Galería de"] .v11-product-stage__slide').first().locator('img').first();
   await expect(mainImage).toHaveAttribute('src',expected);
@@ -42,6 +54,8 @@ test.beforeEach(async ({ page }) => {
     if (pathname === '/api/store-settings') data = { settings: {}, brands: [] };
     else if (pathname === '/api/products/mate-de-prueba') data = product;
     else if (pathname === '/api/products/mate-variantes') data = variantProduct;
+    else if (pathname === '/api/products/mate-unico') data = singleImageProduct;
+    else if (pathname === '/api/products/mate-galeria') data = manyImageProduct;
     else if (pathname === '/api/products') data = [product,variantProduct];
     else if (pathname === '/api/categories') data = [{ id: 1, brandId: 'amargos', name: 'Mates', slug: 'mates' }];
     else if (pathname === '/api/banners') data = [];
@@ -149,4 +163,38 @@ test('catalog product card navigates on tap without media arrows', async ({page}
   await expect(card.getByRole('button',{name:'Imagen anterior'})).toHaveCount(0);
   await card.getByRole('link',{name:'Ver Mate de prueba'}).click();
   await expect(page).toHaveURL(/\/producto\/mate-de-prueba/);
+});
+
+
+test('single photograph has no redundant thumbnail navigation', async ({page}) => {
+  await page.goto('/producto/mate-unico');
+  await expect(page.getByRole('heading',{name:'Mate única foto'})).toBeVisible();
+  await expect(page.getByRole('group',{name:'Miniaturas de producto'})).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'Imagen siguiente'})).toHaveCount(0);
+  await expect(page.getByRole('button',{name:'Ampliar imagen'})).toBeVisible();
+});
+
+test('ten-image gallery provides direct thumbnail access without navigation arrows', async ({page}) => {
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/producto/mate-galeria');
+  const group=page.getByRole('group',{name:'Miniaturas de producto'});
+  await expect(group.getByRole('button')).toHaveCount(10);
+  await group.getByRole('button',{name:'Ver imagen 10 de 10'}).click();
+  await expect(group.getByRole('button',{name:'Ver imagen 10 de 10'})).toHaveAttribute('aria-current','true');
+  await expect(page.getByRole('button',{name:'Imagen siguiente'})).toHaveCount(0);
+  const overflows=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+  expect(overflows).toBeLessThanOrEqual(2);
+});
+
+test('desktop card fetches its second image only on hover, never on mobile tap',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/catalogo?brand=amargos');
+  const card=page.locator('article.product-card-v5').filter({hasText:'Mate de prueba'});
+  const photoLink=card.getByRole('link',{name:'Ver Mate de prueba'});
+  await expect(photoLink.locator('img')).toHaveCount(1);
+  await card.hover();
+  await expect(photoLink.locator('img')).toHaveCount(2);
+  await expect.poll(async()=>{
+    return photoLink.locator('img').last().evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth>0&&Number.parseFloat(getComputedStyle(img).opacity)>0.9);
+  }).toBeTruthy();
 });
