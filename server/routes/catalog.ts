@@ -202,7 +202,7 @@ export const catalogRoutes: FastifyPluginAsync = async app => {
       params.push(brand);
     }
     const [rows] = await pool.query(
-      `SELECT id, brand_id AS brandId, name, slug, image_url AS imageUrl, icon_key AS iconKey, sort_order AS sortOrder
+      `SELECT id, brand_id AS brandId, name, slug, image_url AS imageUrl, icon_key AS iconKey, image_position_x AS imagePositionX, image_position_y AS imagePositionY, image_zoom AS imageZoom, image_fit AS imageFit, sort_order AS sortOrder
        FROM categories ${where}
        ORDER BY sort_order, name`,
       params,
