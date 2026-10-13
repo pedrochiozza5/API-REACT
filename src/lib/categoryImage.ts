@@ -7,6 +7,18 @@ export type CategoryImagePlacement = {
   imagePositionY?: number | null;
   imageFit?: CategoryImageFit | null;
 };
+const categoryAssets:Record<string,string> = {
+  mates:'/catalog/categories/mates.webp',bombillas:'/catalog/categories/bombillas.webp',
+  termos:'/catalog/categories/termos.webp',canastas:'/catalog/categories/canastas.webp',
+  combos:'/catalog/categories/combos.webp',accesorios:'/catalog/categories/accesorios.webp',
+  yerbas:'/catalog/categories/yerbas.webp',yerberos:'/catalog/categories/yerberos.webp',
+  dispensers:'/catalog/categories/dispensers.webp',
+};
+export function categoryImageUrl(category:{imageUrl?:string|null;slug:string;brandId?:string}):string{
+  return category.imageUrl || categoryAssets[category.slug]
+    || (category.brandId==='enyerbados'?'/brand/yerbas-stock.webp':'/brand/repisa.webp');
+}
+
 const studioSlugs = new Set(['mates','bombillas','termos','canastas','combos','accesorios']);
 const clamp=(n:number,min:number,max:number)=>Math.max(min,Math.min(max,n));
 
