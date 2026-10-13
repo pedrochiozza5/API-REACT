@@ -1,4 +1,4 @@
-import { type CSSProperties, type MouseEvent, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -31,13 +31,13 @@ const fallback: Banner[] = [
   { id: -3, brandId: null, eyebrow: 'Bien Yerbados', title: 'La yerba también elige.', subtitle: 'Una selección para acompañar cada mate.', imageUrl: '/brand/yerbas-stock.webp', ctaLabel: 'Ver Yerbados', href: '/yerbados', sortOrder: 30 },
 ];
 
-function BannerLink({ href, label, className, children, tabIndex, onClick }: {
+function BannerLink({ href, label, className, children, tabIndex, }: {
   href: string; label: string; className: string; children?: ReactNode;
-  tabIndex: number; onClick?: (event: MouseEvent<HTMLAnchorElement>) => void;
+  tabIndex: number;
 }) {
   const destination = getBannerDestination(href);
   if (!destination) return null;
-  const attrs = { className, 'aria-label': label, tabIndex, onClick };
+  const attrs = { className, 'aria-label': label, tabIndex };
   return destination.kind === 'internal'
     ? <Link to={destination.href} {...attrs}>{children}</Link>
     : <a href={destination.href} target="_blank" rel="noopener noreferrer" {...attrs}>{children}</a>;
@@ -128,7 +128,7 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
     onBlurCapture={() => setHovered(false)}
     tabIndex={0}
     aria-roledescription="carrusel"
-    aria-label="Historias destacadas; deslizá para cambiar de banner"
+    aria-description="Deslizá para cambiar de banner. Flechas del teclado para navegar."
     onKeyDown={event => {
       if (event.target !== event.currentTarget) return;
       if (event.key === 'ArrowLeft') { event.preventDefault(); emblaApi?.scrollPrev(); }
@@ -162,7 +162,7 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
               label={`Abrir ${slide.title}`}
               className="absolute inset-0 z-[5] block focus-visible:outline-4 focus-visible:outline-offset-[-4px] focus-visible:outline-amber-300"
               tabIndex={selected === index ? 0 : -1}
-              onClick={event => { if (emblaApi && !emblaApi.clickAllowed()) event.preventDefault(); }}
+              
             />}
 
             <div className="pointer-events-none relative z-10 flex h-full items-end px-5 pb-8 sm:px-10 sm:pb-12 lg:px-16 lg:pb-14 xl:px-20">
@@ -182,7 +182,7 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
                     href={slide.href}
                     label={slide.ctaLabel}
                     tabIndex={selected === index ? 0 : -1}
-                    onClick={event => { if (emblaApi && !emblaApi.clickAllowed()) event.preventDefault(); }}
+                    
                     className="editorial-commerce-cta pointer-events-auto relative z-20 mt-5 inline-flex min-h-12 items-center gap-2 rounded-[12px] px-6 transition duration-200 hover:-translate-y-px"
                   >{slide.ctaLabel}<ArrowRight size={15}/></BannerLink>}
                 </motion.div>}
