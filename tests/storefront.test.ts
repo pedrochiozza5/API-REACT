@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { productMediaUrls } from '../src/lib/productMedia.ts';
 import { makeWhatsappMessage } from '../server/orderMessage.ts';
+import { categoryImagePresentation, categoryImageUrl } from '../src/lib/categoryImage.ts';
 
 test('single cover produces one slide', () => {
   assert.deepEqual(productMediaUrls({imageUrl:'/one.webp',images:[]}), ['/one.webp']);
@@ -58,4 +59,26 @@ test('shipping message includes customer address and every item', () => {
   assert.match(message,/Envío — Calle 123/);
   assert.match(message,/1x Mate/);
   assert.match(message,/1x Yerba/);
+});
+
+test('category image preserves previous studio default without custom crop', () => {
+  const framing=categoryImagePresentation({slug:'mates'});
+  assert.equal(framing.fit,'contain');
+  assert.equal(framing.style.objectPosition,'50% 50%');
+  assert.equal(framing.style.transform,'scale(1)');
+});
+test('category crop can explicitly cover, reposition and zoom', () => {
+  const framing=categoryImagePresentation({slug:'mates',imageFit:'cover',imageZoom:1.35,imagePositionX:20,imagePositionY:80});
+  assert.equal(framing.fit,'cover');
+  assert.equal(framing.style.objectPosition,'20% 80%');
+  assert.equal(framing.style.transform,'scale(1.35)');
+});
+test('category crop clamps invalid coordinates and zoom', () => {
+  const framing=categoryImagePresentation({slug:'yerbas',imageZoom:12,imagePositionX:-20,imagePositionY:130});
+  assert.equal(framing.style.objectPosition,'0% 100%');
+  assert.equal(framing.style.transform,'scale(1.8)');
+});
+test('category image fallback is brand-specific and explicit image has priority', () => {
+  assert.equal(categoryImageUrl({slug:'no-catalogada',brandId:'enyerbados'}),'/brand/yerbas-stock.webp');
+  assert.equal(categoryImageUrl({slug:'mates',brandId:'amargos',imageUrl:'/uploads/mate-custom.webp'}),'/uploads/mate-custom.webp');
 });
