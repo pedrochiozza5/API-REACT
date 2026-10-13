@@ -1,8 +1,8 @@
-name: Validate and package V11.3.1 white background
+name: Validate and package V11.3.2 warm premium
 
 on:
   push:
-    branches: [v11.3.1-white-background]
+    branches: [v11.3.2-warm-premium]
   workflow_dispatch:
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: bienamargos-v11.3.1-VISUAL-QA
+          name: bienamargos-v11.3.2-VISUAL-QA
           path: |
             test-results/*.png
             test-results/**/*.zip
@@ -59,11 +59,11 @@ jobs:
           test -f hostinger-source/server.js
           test -d hostinger-source/src
           test -d hostinger-source/server
-          node -e "const p=require('./hostinger-source/package.json'); if(p.version!=='11.3.1')process.exit(1)"
-      - name: Upload V11.3 Hostinger SOURCE artifact
+          node -e "const p=require('./hostinger-source/package.json'); if(p.version!=='11.3.2')process.exit(1)"
+      - name: Upload V11.3.2 Hostinger SOURCE artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bienamargos-v11.3.1-HOSTINGER-SOURCE
+          name: bienamargos-v11.3.2-HOSTINGER-SOURCE
           path: hostinger-source/**
           if-no-files-found: error
           compression-level: 6
