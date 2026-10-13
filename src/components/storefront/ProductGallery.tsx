@@ -1,7 +1,7 @@
 import { type KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronLeft, ChevronRight, Expand, X } from 'lucide-react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { Expand, X } from 'lucide-react';
+import * as Dialog from '@radix-ui/react-dialog';
 import type { ProductImage as ProductImageType, BrandId } from '@/lib/types';
 import { ProductImage } from './ProductImage';
 
@@ -22,7 +22,6 @@ export function ProductGallery({
   images, fallback, recoveryFallback, name, categoryName,
   brand='amargos', zoom=1, positionX=50, positionY=50, blendMode='normal',
 }: Props) {
-  const reducedMotion=useReducedMotion();
   const originalUrls=useMemo(()=>Array.from(new Set(
     [fallback,...images.map(item=>item.imageUrl)]
       .map(url=>String(url||'').trim()).filter(Boolean)
@@ -113,30 +112,45 @@ export function ProductGallery({
         </div>
       </div>
       <div className="v11-product-stage__bottom">
-        <span className="font-mono-ui text-[11px] font-bold uppercase tracking-[.12em]">{String(displaySlides.length?selected+1:0).padStart(2,'0')} / {String(displaySlides.length).padStart(2,'0')}</span>
-        <div className="flex items-center gap-2">
-          {displaySlides.length>1&&<>
-            <button type="button" className="v11-product-nav" onClick={()=>embla?.scrollPrev()} aria-label="Imagen anterior"><ChevronLeft size={18}/></button>
-            <button type="button" className="v11-product-nav" onClick={()=>embla?.scrollNext()} aria-label="Imagen siguiente"><ChevronRight size={18}/></button>
-          </>}
-          {current&&<button type="button" className="v11-product-nav v11-product-nav--expand" onClick={()=>{setZoomed(false);setLightbox(true)}} aria-label="Ampliar imagen"><Expand size={17}/><span>Ampliar</span></button>}
+        {displaySlides.length > 1
+          ? <span className="font-mono-ui text-[11px] font-bold uppercase tracking-[.12em]">
+              {String(selected+1).padStart(2,'0')} / {String(displaySlides.length).padStart(2,'0')}
+            </span>
+          : <span className="text-[11px] font-semibold text-[#415a48]">Vista del producto</span>}
+        <div className="flex items-center gap-3">
+          {displaySlides.length > 1 && <span className="hidden text-[11px] font-semibold text-[#476150] sm:inline">Elegí una foto desde las miniaturas</span>}
+          {displaySlides.length > 1 && <span className="text-[11px] font-semibold text-[#476150] sm:hidden">Deslizá para explorar</span>}
+          {current && <button
+            type="button"
+            className="v11-product-nav v11-product-nav--expand"
+            onClick={() => { setZoomed(false); setLightbox(true); }}
+            aria-label="Ampliar imagen"
+          ><Expand size={16} /><span>Ampliar</span></button>}
         </div>
       </div>
     </section>
 
-    <AnimatePresence>{lightbox&&current&&<motion.div
-      initial={reducedMotion?false:{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}
-      className="fixed inset-0 z-[500] flex flex-col bg-[#111c16]/96 p-3 sm:p-6"
-      role="dialog" aria-modal="true" aria-label={`Imagen ampliada de ${name}`}
-      onClick={()=>setLightbox(false)}
-    >
-      <div className="mb-3 flex items-center justify-between text-white">
-        <span className="text-xs font-semibold">{name} · {selected+1} de {displaySlides.length}</span>
-        <button type="button" autoFocus onClick={()=>setLightbox(false)} aria-label="Cerrar imagen ampliada" className="grid h-11 w-11 place-items-center rounded-full bg-white text-[#172119]"><X size={19}/></button>
-      </div>
-      <button type="button" className="mx-auto flex min-h-0 w-full max-w-[1200px] flex-1 cursor-zoom-in items-center justify-center overflow-hidden rounded-[14px] bg-[#f5f2e9]" onClick={event=>{event.stopPropagation();setZoomed(v=>!v)}} aria-label={zoomed?'Reducir imagen':'Acercar imagen'}>
-        <ProductImage src={current} alt={name} zoom={zoomed?1.4:1} loading="eager"/>
-      </button>
-    </motion.div>}</AnimatePresence>
+    <Dialog.Root open={lightbox && !!current} onOpenChange={open => { setLightbox(open); if (!open) setZoomed(false); }}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-[500] bg-[#0b1710]/90" />
+        <Dialog.Content className="fixed inset-0 z-[501] flex flex-col gap-3 overflow-hidden p-3 outline-none sm:p-6" aria-describedby={undefined}>
+          <div className="flex items-center justify-between gap-3 text-white">
+            <Dialog.Title className="min-w-0 truncate text-sm font-semibold">
+              {name}{displaySlides.length>1 ? ` · ${selected+1} de ${displaySlides.length}` : ''}
+            </Dialog.Title>
+            <Dialog.Close asChild><button type="button" aria-label="Cerrar imagen ampliada" className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-white text-[#172119] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><X size={20}/></button></Dialog.Close>
+          </div>
+          <button
+            type="button"
+            className="mx-auto flex min-h-0 w-full max-w-[1200px] flex-1 cursor-zoom-in items-center justify-center overflow-hidden rounded-[14px] bg-[#f5f2e9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            onClick={() => setZoomed(old => !old)}
+            aria-label={zoomed ? 'Reducir imagen' : 'Acercar imagen'}
+          >
+            <ProductImage src={current} alt={name} zoom={zoomed ? 1.4 : 1} loading="eager" />
+          </button>
+          <span className="text-center text-[11px] text-white/70">Tocá la fotografía para {zoomed ? 'reducir' : 'ampliar'}</span>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   </>;
 }
