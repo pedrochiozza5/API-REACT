@@ -25,7 +25,7 @@ export function ProductCard({ product }: { product: Product }) {
   const [preview,setPreview] = useState<ProductVariant|null>(
     variants.find(variant => !variant.trackStock || Number(variant.stockQty) > 0) || variants[0] || null,
   );
-  const [mediaIndex,setMediaIndex] = useState(0);
+  const [mediaSelection,setMediaSelection] = useState<{ key: string; index: number }>({key:"",index:0});
   const [justAdded,setJustAdded] = useState(false);
 
   useEffect(() => {
@@ -58,7 +58,10 @@ export function ProductCard({ product }: { product: Product }) {
     return urls.length ? urls : [legacyPrimary].filter((url): url is string => Boolean(url));
   }, [product, preview, legacyPrimary]);
 
-  useEffect(() => setMediaIndex(0), [product.id, preview?.id, media.length]);
+  // Derived identity makes variant + first image switch atomically in one render.
+  const mediaKey = `${product.id}:${preview?.id ?? 'product'}`;
+  const mediaIndex = mediaSelection.key === mediaKey
+    ? Math.min(mediaSelection.index, Math.max(0, media.length - 1)) : 0;
   useEffect(()=>{if(!justAdded)return;const timer=window.setTimeout(()=>setJustAdded(false),900);return()=>window.clearTimeout(timer);},[justAdded]);
 
   const primary = media[mediaIndex] || media[0] || legacyPrimary;
@@ -98,10 +101,10 @@ export function ProductCard({ product }: { product: Product }) {
   }
 
   function previousMedia() {
-    setMediaIndex(index => (index - 1 + media.length) % media.length);
+    setMediaSelection({ key:mediaKey, index:(mediaIndex - 1 + media.length) % media.length });
   }
   function nextMedia() {
-    setMediaIndex(index => (index + 1) % media.length);
+    setMediaSelection({ key:mediaKey, index:(mediaIndex + 1) % media.length });
   }
 
   return <article
