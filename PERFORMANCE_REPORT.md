@@ -1,4 +1,4 @@
-# PERFORMANCE REPORT — V10
+# PERFORMANCE REPORT — V11
 
 ## Estado
 No existe una medición A/B reproducible de producción dentro de este encargo. Cualquier valor LCP, INP o CLS informado como mejora porcentual sería inventado.
@@ -23,3 +23,10 @@ LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 y Lighthouse mobile ≥ 90 cuando el di
 
 ## No realizado
 No hay benchmarks de producción, prueba de concurrencia de 5.000 sesiones ni comparación visual automatizada en este entorno. Las métricas quedan pendientes hasta disponer de staging accesible y navegador.
+
+## Cambios V11 y riesgos
+- `ProductImage` elimina el gating de visibilidad por estado cargado (sin repintados de opacidad forzados).
+- `productMediaUrls` minimiza imágenes de variantes ajenas; el listado suma una consulta agrupada a `product_variant_images` (máximo 3 por variante): comprobar su coste y payload en staging.
+- La galería desktop usa miniaturas reales; no precarga toda la colección manualmente.
+- Admin mejora controles multimedia sin consultas adicionales por imagen.
+- No se midió LCP/INP/CLS de V11 ni se ejecutó bundle analysis.
