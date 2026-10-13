@@ -1,4 +1,4 @@
-import { type KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { type KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { Expand, X } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -31,6 +31,7 @@ export function ProductGallery({
   const displaySlides=slides.length?slides:[recoveryFallback].filter(Boolean) as string[];
   const [viewportRef,embla]=useEmblaCarousel({loop:displaySlides.length>1,align:'start',watchDrag:displaySlides.length>1});
   const [selected,setSelected]=useState(0);
+  const thumbsRef=useRef<HTMLDivElement>(null);
   const [lightbox,setLightbox]=useState(false);
   const [zoomed,setZoomed]=useState(false);
   const galleryKey=originalUrls.join('\u0001');
@@ -66,6 +67,15 @@ export function ProductGallery({
     const img=new Image();img.decoding='async';img.src=next;
   },[selected,slides]);
 
+  // Keep the active thumbnail visible when swiping long 6–10 image galleries.
+  // The main viewport retains native vertical page scrolling (touch-pan-y).
+  useEffect(() => {
+    const active=thumbsRef.current?.querySelector<HTMLElement>('[aria-current="true"]');
+    if (!active) return;
+    active.scrollIntoView({ block: 'nearest', inline: 'nearest',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }, [selected, displaySlides.length]);
+
   const current=displaySlides[Math.min(selected,Math.max(0,displaySlides.length-1))]||null;
   const safeZoom=Math.min(Math.max(Number(zoom)||1,.82),1.4);
   const markFailed=useCallback((url:string)=>setFailed(old=>new Set(old).add(url)),[]);
@@ -87,7 +97,7 @@ export function ProductGallery({
         <span>{categoryName||'COLECCIÓN'}</span>
       </div>
       <div className="v11-product-stage__layout">
-        {displaySlides.length>1&&<div className="v11-product-thumbs" aria-label="Miniaturas de producto">
+        {displaySlides.length>1&&<div ref={thumbsRef} className="v11-product-thumbs" role="group" aria-label="Miniaturas de producto">
           {displaySlides.map((url,index)=><button
             key={url} type="button" onClick={()=>embla?.scrollTo(index)}
             aria-label={`Ver imagen ${index+1} de ${displaySlides.length}`}
