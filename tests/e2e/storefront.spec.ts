@@ -53,6 +53,7 @@ test.beforeEach(async ({ page }) => {
     let data: unknown = [];
     if (pathname === '/api/store-settings') data = { settings: {}, brands: [] };
     else if (pathname === '/api/products/mate-de-prueba') data = product;
+    else if (pathname === '/api/products/yerba-de-prueba') data = {...product, id:3, brandId:'enyerbados', name:'Yerba de prueba', slug:'yerba-de-prueba', categoryName:'Yerbas'};
     else if (pathname === '/api/products/mate-variantes') data = variantProduct;
     else if (pathname === '/api/products/mate-unico') data = singleImageProduct;
     else if (pathname === '/api/products/mate-galeria') data = manyImageProduct;
@@ -207,4 +208,51 @@ test('category cards use the framing configured by the admin',async({page})=>{
   await expect(image).toHaveCSS('object-fit','cover');
   await expect(image).toHaveCSS('object-position','25% 75%');
   await expect(image).toHaveCSS('transform',/matrix\(1\.35, 0, 0, 1\.35, 0, 0\)/);
+});
+
+
+test('the mate-and-beach image remains visibly integrated below the hero', async ({page}) => {
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/');
+  const backdrop=page.locator('.storefront-backdrop--coastal');
+  const photo=backdrop.locator('img.storefront-backdrop__image');
+  await expect(photo).toHaveAttribute('src','/brand/hero-beach.webp');
+  await expect.poll(()=>photo.evaluate((img:HTMLImageElement)=>img.complete && img.naturalWidth>0)).toBeTruthy();
+  await expect(photo).toHaveCSS('object-fit','cover');
+  const interlude=page.getByRole('region',{name:'La ronda'});
+  await interlude.scrollIntoViewIfNeeded();
+  await expect(interlude).toBeVisible();
+  const flow=page.locator('.home-clean-flow');
+  const bg=await flow.evaluate(el=>getComputedStyle(el).backgroundImage);
+  expect(bg).toContain('rgba');
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(2);
+  await page.screenshot({path:'test-results/coastal-home-desktop.png',fullPage:true});
+});
+
+test('product still displays its original media above the beach atmosphere',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/producto/mate-de-prueba');
+  const backdrop=page.locator('.storefront-backdrop--coastal img.storefront-backdrop__image');
+  await expect(backdrop).toBeVisible();
+  await expect.poll(()=>backdrop.evaluate((img:HTMLImageElement)=>img.complete && img.naturalWidth>0)).toBeTruthy();
+  const rail=page.locator('.product-purchase-rail');
+  await expect(rail).toBeVisible();
+  await expect(page.getByRole('heading',{name:'La próxima ronda empieza con una elección.'})).toBeVisible();
+  const image=page.locator('[aria-label^="Galería de"] .v11-product-stage__slide').first().locator('img').first();
+  await expect.poll(()=>image.evaluate((img:HTMLImageElement)=>img.complete && img.naturalWidth>0)).toBeTruthy();
+  await page.screenshot({path:'test-results/coastal-product-desktop.png',fullPage:true});
+});
+
+test('Yerbados mobile keeps readable hero button and coastal image',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/yerbados');
+  const photo=page.locator('.storefront-backdrop--coastal img.storefront-backdrop__image');
+  await expect(photo).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Un buen mate merece una buena yerba.'})).toBeVisible();
+  const cta=page.locator('a.editorial-commerce-cta').first();
+  await expect(cta).toHaveCSS('color','rgb(255, 255, 255)');
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(2);
+  await page.screenshot({path:'test-results/coastal-yerbados-mobile.png',fullPage:true});
 });
