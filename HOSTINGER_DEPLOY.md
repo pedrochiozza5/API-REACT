@@ -1,4 +1,4 @@
-# Hostinger — despliegue de V11.0 SOURCE
+# Hostinger — despliegue de V11.2 SOURCE
 
 ## Preparación
 1. Crear un backup exportado de MySQL y conservar los uploads persistentes antes de intervenir producción.
@@ -8,7 +8,7 @@
 5. Configurar Node.js 22, `npm install`, `npm run build` y entrada `server.js`.
 6. Configurar las variables de entorno y credenciales en Hostinger, NO dentro del ZIP.
 7. Confirmar persistencia de `UPLOAD_DIR` / almacenamiento `$HOME/.bienamargos/uploads` antes de publicar.
-8. Verificar /api/health (si está disponible en esta instalación), Home de ambas marcas, imágenes antiguas, editor, carrito, stock y pedido a WhatsApp con datos de prueba.
+8. Hacer backup SQL antes del primer arranque: V11.2 agrega cuatro columnas de encuadre a `categories` (sin borrar registros). Verificar /api/health (si está disponible en esta instalación), Home de ambas marcas, imágenes antiguas, editor, carrito, stock y pedido a WhatsApp con datos de prueba.
 9. Desplegar en producción solo tras comprobar la base y el flujo completo.
 
 ## Seguridad
