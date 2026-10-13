@@ -641,16 +641,16 @@ textarea.checkout-input{padding-top:12px;padding-bottom:12px}
 .v11-product-stage__slide{position:relative;flex:0 0 100%;min-width:0;min-height:0;height:100%;}
 .v11-product-stage__photo{width:100%;height:100%;background:transparent}
 .v11-product-stage__photo img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 16px 20px rgba(20,37,26,.08))}
-.v11-product-thumbs{display:flex;flex-direction:column;gap:10px;max-height:560px;width:76px;flex-shrink:0;overflow:auto;scrollbar-width:thin;padding:3px}
-.v11-product-thumb{position:relative;flex:0 0 auto;width:67px;height:77px;overflow:hidden;border-radius:9px;background:#f5f2ea;border:2px solid transparent;opacity:.78;transition:border-color .16s,opacity .16s}
+.v11-product-thumbs{display:flex;flex-direction:column;gap:10px;max-height:560px;width:82px;flex-shrink:0;overflow:auto;scrollbar-width:thin;padding:3px;scroll-snap-type:y proximity}
+.v11-product-thumb{position:relative;flex:0 0 auto;width:72px;height:80px;overflow:hidden;border-radius:10px;background:#f5f2ea;border:2px solid transparent;opacity:.88;transition:border-color .16s,opacity .16s;scroll-snap-align:start}
 .v11-product-thumb.is-active{border-color:#174a36;opacity:1}
-.v11-product-thumb:hover{opacity:1}
+.v11-product-thumb:hover{opacity:1}.v11-product-thumb:focus-visible{outline:3px solid #174a36;outline-offset:2px}
 .v11-product-stage__bottom{display:flex;align-items:center;justify-content:space-between;padding:8px 22px 20px;color:#234533}
 .v11-product-nav{display:inline-flex;min-width:44px;min-height:44px;justify-content:center;align-items:center;gap:9px;border-radius:999px;border:1px solid rgba(23,61,40,.19);background:#f6f6f0;color:#193d2d;transition:background .18s,border-color .18s}
 .v11-product-nav:hover{background:#fff;border-color:#174a36}
 .v11-product-nav--expand{padding:0 16px;font-weight:750;font-size:12px}
 .v11-product-stage--yerbados .v11-product-nav{color:#173e2e}
-@media(max-width:767px){.v11-product-stage{min-height:0;height:min(67svh,640px)}.v11-product-stage__layout{padding:4px 0 0;flex-direction:column-reverse;gap:2px}.v11-product-stage__top{padding:14px 18px 4px;font-size:9px}.v11-product-thumbs{width:auto;min-height:62px;height:62px;max-height:none;overflow-x:auto;overflow-y:hidden;flex-direction:row;padding:2px 16px;gap:8px}.v11-product-thumb{height:54px;width:54px}.v11-product-stage__viewport{min-height:0}.v11-product-stage__bottom{padding:6px 14px 12px}}
+@media(max-width:767px){.v11-product-stage{min-height:0;height:min(67svh,640px)}.v11-product-stage__layout{padding:4px 0 0;flex-direction:column-reverse;gap:2px}.v11-product-stage__top{padding:14px 18px 4px;font-size:9px}.v11-product-thumbs{width:auto;min-height:68px;height:68px;max-height:none;overflow-x:auto;overflow-y:hidden;flex-direction:row;padding:2px 16px;gap:8px;scroll-snap-type:x proximity}.v11-product-thumb{height:60px;width:60px}.v11-product-stage__viewport{min-height:0}.v11-product-stage__bottom{padding:6px 14px 12px}}
 
 /* Explicit text/background pairing: the previous campaign CTA inherited
    white text from the full-photo banner on an almost white background. */
@@ -659,7 +659,7 @@ textarea.checkout-input{padding-top:12px;padding-bottom:12px}
 .storefront-page--yellow .editorial-commerce-cta{background:#163e2e;color:#fff;border-color:#163e2e}
 .storefront-page--yellow .editorial-commerce-cta:hover,.storefront-page--yellow .editorial-commerce-cta:focus-visible{background:#0c2c20;color:#fff}
 .storefront-page .editorial-commerce-cta:focus-visible{outline:3px solid #f0c857;outline-offset:3px}
-.admin-image-action{display:grid;min-width:40px;min-height:40px;place-items:center;border-radius:10px;background:#fff;border:1px solid #dce3d8;color:#274336;transition:background-color .18s}
+.admin-image-action{display:grid;min-width:44px;min-height:44px;place-items:center;border-radius:10px;background:#fff;border:1px solid #dce3d8;color:#274336;transition:background-color .18s}
 .admin-image-action:hover:not(:disabled){background:#e7f0e7}
 .admin-image-action:disabled{opacity:.32;cursor:not-allowed}
 .admin-image-action:focus-visible{outline:3px solid #a5beaa;outline-offset:2px}
