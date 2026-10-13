@@ -32,6 +32,7 @@ export function ProductGallery({
   const [viewportRef,embla]=useEmblaCarousel({loop:displaySlides.length>1,align:'start',watchDrag:displaySlides.length>1});
   const [selected,setSelected]=useState(0);
   const thumbsRef=useRef<HTMLDivElement>(null);
+  const expandRef=useRef<HTMLButtonElement>(null);
   const [lightbox,setLightbox]=useState(false);
   const [zoomed,setZoomed]=useState(false);
   const galleryKey=originalUrls.join('\u0001');
@@ -133,6 +134,7 @@ export function ProductGallery({
           {current && <button
             type="button"
             className="v11-product-nav v11-product-nav--expand"
+            ref={expandRef}
             onClick={() => { setZoomed(false); setLightbox(true); }}
             aria-label="Ampliar imagen"
           ><Expand size={16} /><span>Ampliar</span></button>}
@@ -143,7 +145,7 @@ export function ProductGallery({
     <Dialog.Root open={lightbox && !!current} onOpenChange={open => { setLightbox(open); if (!open) setZoomed(false); }}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[500] bg-[#0b1710]/90" />
-        <Dialog.Content className="fixed inset-0 z-[501] flex flex-col gap-3 overflow-hidden p-3 outline-none sm:p-6" aria-describedby={undefined}>
+        <Dialog.Content className="fixed inset-0 z-[501] flex flex-col gap-3 overflow-hidden p-3 outline-none sm:p-6" aria-describedby={undefined} onCloseAutoFocus={event => { event.preventDefault(); expandRef.current?.focus(); }}>
           <div className="flex items-center justify-between gap-3 text-white">
             <Dialog.Title className="min-w-0 truncate text-sm font-semibold">
               {name}{displaySlides.length>1 ? ` · ${selected+1} de ${displaySlides.length}` : ''}
