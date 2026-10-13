@@ -174,7 +174,7 @@ export function EditorialBannerCarousel({ brand }: { brand: BrandId }) {
         type="button"
         aria-label="Banner siguiente"
         onClick={() => emblaApi?.scrollNext()}
-        className="absolute right-0 top-1/2 z-20 hidden h-12 w-11 -translate-y-1/2 place-items-center bg-black/62 text-white transition hover:bg-black/78 sm:h-14 sm:w-11"
+        className="absolute right-0 top-1/2 z-20 hidden h-12 w-11 -translate-y-1/2 place-items-center bg-black/62 text-white transition hover:bg-black/78 sm:grid sm:h-14 sm:w-11"
       ><ArrowRight size={18}/></button>
 
       <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/28 px-2.5 py-2 backdrop-blur-sm sm:bottom-4">
