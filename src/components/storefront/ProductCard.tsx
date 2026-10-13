@@ -1,4 +1,4 @@
-import { Check, Plus } from 'lucide-react';
+import { ArrowUpRight, Check, Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -25,7 +25,6 @@ export function ProductCard({ product }: { product: Product }) {
   const [preview,setPreview] = useState<ProductVariant|null>(
     variants.find(variant => !variant.trackStock || Number(variant.stockQty) > 0) || variants[0] || null,
   );
-  const [showAlternative,setShowAlternative] = useState(false);
   const [justAdded,setJustAdded] = useState(false);
 
   useEffect(() => {
@@ -98,11 +97,7 @@ export function ProductCard({ product }: { product: Product }) {
 
 
   return <article
-    onMouseEnter={() => {
-      prefetchDetail();
-      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) setShowAlternative(true);
-    }}
-    onMouseLeave={() => setShowAlternative(false)}
+    onMouseEnter={prefetchDetail}
     onFocus={prefetchDetail}
     className="product-card-v5 group min-w-0 overflow-hidden"
   >
@@ -124,7 +119,9 @@ export function ProductCard({ product }: { product: Product }) {
           className="absolute inset-0"
           imageClassName="duration-300"
         />
-        {showAlternative && media.length > 1 && <CardHoverImage key={`${product.id}:${preview?.id ?? 0}:${media[1]}`} src={media[1]} alt="" />}
+        <span aria-hidden="true" className="product-card-detail-hint">
+          Ver detalles <ArrowUpRight size={14} />
+        </span>
       </Link>
 
 
@@ -175,28 +172,4 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
     </div>
   </article>;
-}
-
-
-/** Only fetch the secondary photograph on fine-pointer hover. The primary stays
- * visible while it decodes, so a failed/slow alternative can never flash white.
- * This component remounts on variant/URL changes to prevent stale load state.
- */
-function CardHoverImage({ src, alt }: { src: string; alt: string }) {
-  const [ready, setReady] = useState(false);
-  const [failed, setFailed] = useState(false);
-  if (failed) return null;
-  return <img
-    src={src}
-    alt={alt}
-    loading="lazy"
-    decoding="async"
-    onLoad={event => {
-      const image = event.currentTarget;
-      if (image.naturalWidth > 0) setReady(true);
-    }}
-    onError={() => setFailed(true)}
-    className={`pointer-events-none absolute inset-0 h-full w-full object-contain transition-opacity duration-200 ease-out ${ready ? 'opacity-100' : 'opacity-0'}`}
-    aria-hidden="true"
-  />;
 }
