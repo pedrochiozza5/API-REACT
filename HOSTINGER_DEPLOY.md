@@ -1,8 +1,8 @@
-# Hostinger — despliegue de V10.0 SOURCE
+# Hostinger — despliegue de V11.0 SOURCE
 
 ## Preparación
 1. Crear un backup exportado de MySQL y conservar los uploads persistentes antes de intervenir producción.
-2. Descargar el artefacto `bienamargos-v10-HOSTINGER-SOURCE` desde GitHub Actions de la rama `v10-source`; **NO** usar el ZIP de `Code → Download ZIP` porque agrega una carpeta contenedora.
+2. Descargar el artefacto `bienamargos-v11-HOSTINGER-SOURCE` desde GitHub Actions de la rama `v11-source`; **NO** usar el ZIP de `Code → Download ZIP` porque agrega una carpeta contenedora.
 3. Comprobar que el ZIP contiene directamente `package.json`, `server.js`, `src/`, `server/` y `public/`.
 4. Subirlo a una aplicación **staging** o preview primero.
 5. Configurar Node.js 22, `npm install`, `npm run build` y entrada `server.js`.
@@ -19,4 +19,4 @@
 - Aislar staging de WhatsApp real y del stock real si se hacen compras simuladas.
 
 ## Seguimiento
-GitHub → Actions → “Validate and package V10 source” → último run verde → Artifacts → `bienamargos-v10-HOSTINGER-SOURCE`. Si CI falla, leer los logs y no desplegar una rama sin validar.
+GitHub → Actions → “Validate and package V11 source” → último run verde → Artifacts → `bienamargos-v11-HOSTINGER-SOURCE`. Si CI falla, leer los logs y no desplegar una rama sin validar.
