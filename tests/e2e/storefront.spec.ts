@@ -57,7 +57,7 @@ test.beforeEach(async ({ page }) => {
     else if (pathname === '/api/products/mate-unico') data = singleImageProduct;
     else if (pathname === '/api/products/mate-galeria') data = manyImageProduct;
     else if (pathname === '/api/products') data = [product,variantProduct];
-    else if (pathname === '/api/categories') data = [{ id: 1, brandId: 'amargos', name: 'Mates', slug: 'mates' }];
+    else if (pathname === '/api/categories') data = [{ id: 1, brandId: 'amargos', name: 'Mates', slug: 'mates', imageUrl:'/brand/repisa.webp', imageFit:'cover', imageZoom:1.35, imagePositionX:25, imagePositionY:75 }];
     else if (pathname === '/api/banners') data = [];
     else if (pathname === '/api/faqs') data = [];
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(data) });
@@ -186,15 +186,25 @@ test('ten-image gallery provides direct thumbnail access without navigation arro
   expect(overflows).toBeLessThanOrEqual(2);
 });
 
-test('desktop card fetches its second image only on hover, never on mobile tap',async({page})=>{
+test('desktop card keeps one photograph when hovered, without collage overlays',async({page})=>{
   await page.setViewportSize({width:1440,height:900});
   await page.goto('/catalogo?brand=amargos');
   const card=page.locator('article.product-card-v5').filter({hasText:'Mate de prueba'});
   const photoLink=card.getByRole('link',{name:'Ver Mate de prueba'});
   await expect(photoLink.locator('img')).toHaveCount(1);
   await card.hover();
-  await expect(photoLink.locator('img')).toHaveCount(2);
-  await expect.poll(async()=>{
-    return photoLink.locator('img').last().evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth>0&&Number.parseFloat(getComputedStyle(img).opacity)>0.9);
-  }).toBeTruthy();
+  await expect(photoLink.locator('img')).toHaveCount(1);
+  await expect(photoLink.getByText('Ver detalles')).toBeVisible();
+  await expect.poll(()=>photoLink.locator('img').first().evaluate((img:HTMLImageElement)=>img.complete&&img.naturalWidth>0)).toBeTruthy();
+});
+
+test('category cards use the framing configured by the admin',async({page})=>{
+  await page.setViewportSize({width:1440,height:900});
+  await page.goto('/');
+  const card=page.locator('a.category-card-v5').filter({hasText:'Mates'}).first();
+  await expect(card).toBeVisible();
+  const image=card.locator('img').first();
+  await expect(image).toHaveCSS('object-fit','cover');
+  await expect(image).toHaveCSS('object-position','25% 75%');
+  await expect(image).toHaveCSS('transform',/matrix\(1\.35, 0, 0, 1\.35, 0, 0\)/);
 });
