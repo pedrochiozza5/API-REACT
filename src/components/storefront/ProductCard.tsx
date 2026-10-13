@@ -1,4 +1,4 @@
-import { Check, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { Check, Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -25,7 +25,7 @@ export function ProductCard({ product }: { product: Product }) {
   const [preview,setPreview] = useState<ProductVariant|null>(
     variants.find(variant => !variant.trackStock || Number(variant.stockQty) > 0) || variants[0] || null,
   );
-  const [mediaSelection,setMediaSelection] = useState<{ key: string; index: number }>({key:"",index:0});
+  const [showAlternative,setShowAlternative] = useState(false);
   const [justAdded,setJustAdded] = useState(false);
 
   useEffect(() => {
@@ -58,13 +58,9 @@ export function ProductCard({ product }: { product: Product }) {
     return urls.length ? urls : [legacyPrimary].filter((url): url is string => Boolean(url));
   }, [product, preview, legacyPrimary]);
 
-  // Derived identity makes variant + first image switch atomically in one render.
-  const mediaKey = `${product.id}:${preview?.id ?? 'product'}`;
-  const mediaIndex = mediaSelection.key === mediaKey
-    ? Math.min(mediaSelection.index, Math.max(0, media.length - 1)) : 0;
   useEffect(()=>{if(!justAdded)return;const timer=window.setTimeout(()=>setJustAdded(false),900);return()=>window.clearTimeout(timer);},[justAdded]);
 
-  const primary = media[mediaIndex] || media[0] || legacyPrimary;
+  const primary = media[0] || legacyPrimary;
   const zoom = Math.min(Number(preview?.imageZoom ?? product.imageZoom ?? 1.03), 1.03);
   const positionX = Number(preview?.imagePositionX ?? product.imagePositionX ?? 50);
   const positionY = Number(preview?.imagePositionY ?? product.imagePositionY ?? 50);
@@ -100,15 +96,13 @@ export function ProductCard({ product }: { product: Product }) {
     setJustAdded(true);
   }
 
-  function previousMedia() {
-    setMediaSelection({ key:mediaKey, index:(mediaIndex - 1 + media.length) % media.length });
-  }
-  function nextMedia() {
-    setMediaSelection({ key:mediaKey, index:(mediaIndex + 1) % media.length });
-  }
 
   return <article
-    onMouseEnter={prefetchDetail}
+    onMouseEnter={() => {
+      prefetchDetail();
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) setShowAlternative(true);
+    }}
+    onMouseLeave={() => setShowAlternative(false)}
     onFocus={prefetchDetail}
     className="product-card-v5 group min-w-0 overflow-hidden"
   >
@@ -130,25 +124,9 @@ export function ProductCard({ product }: { product: Product }) {
           className="absolute inset-0"
           imageClassName="duration-300"
         />
+        {showAlternative && media.length > 1 && <CardHoverImage key={`${product.id}:${preview?.id ?? 0}:${media[1]}`} src={media[1]} alt="" />}
       </Link>
 
-      {media.length > 1 && <>
-        <button
-          type="button"
-          aria-label="Imagen anterior"
-          onClick={previousMedia}
-          className="absolute left-2 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/94 text-[#173429] shadow-sm backdrop-blur-sm transition sm:h-9 sm:w-9 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
-        ><ChevronLeft size={16}/></button>
-        <button
-          type="button"
-          aria-label="Imagen siguiente"
-          onClick={nextMedia}
-          className="absolute right-2 top-1/2 z-20 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full border border-black/10 bg-[#fbf8f1]/94 text-[#173429] shadow-sm backdrop-blur-sm transition sm:h-9 sm:w-9 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100"
-        ><ChevronRight size={16}/></button>
-        <div className="pointer-events-none absolute inset-x-0 bottom-2 z-20 flex justify-center gap-1.5" aria-hidden="true">
-          {media.map((_,index)=><span key={index} className={`h-1.5 rounded-full transition-all ${index===mediaIndex?'w-5 bg-[#173e2e]':'w-1.5 bg-[#173e2e]/30'}`}/>)}
-        </div>
-      </>}
 
       <div className="pointer-events-none absolute left-3 top-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-2">
         {hasDiscount && <span className="product-offer-badge">-{discount}%</span>}
@@ -197,4 +175,28 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
     </div>
   </article>;
+}
+
+
+/** Only fetch the secondary photograph on fine-pointer hover. The primary stays
+ * visible while it decodes, so a failed/slow alternative can never flash white.
+ * This component remounts on variant/URL changes to prevent stale load state.
+ */
+function CardHoverImage({ src, alt }: { src: string; alt: string }) {
+  const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
+  if (failed) return null;
+  return <img
+    src={src}
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    onLoad={event => {
+      const image = event.currentTarget;
+      if (image.naturalWidth > 0) setReady(true);
+    }}
+    onError={() => setFailed(true)}
+    className={`pointer-events-none absolute inset-0 h-full w-full object-contain transition-opacity duration-200 ease-out ${ready ? 'opacity-100' : 'opacity-0'}`}
+    aria-hidden="true"
+  />;
 }
