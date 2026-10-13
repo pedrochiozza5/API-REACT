@@ -1,3 +1,13 @@
+# V11 — Multimedia confiable y producto editorial (SOURCE CANDIDATE)
+
+La V11 se basa en V10 y repara la causa de código más probable del bug de imágenes invisibles al cambiar variante. Unifica la selección de galerías en Card y ProductPage, completa los datos de variante en listados y rediseña la presentación del producto y las acciones de multimedia del administrador.
+
+**El repositorio no se compiló ni se ejecutó Playwright en esta entrega.** No desplegar directamente sobre datos de producción sin pasar los pasos de `HOSTINGER_DEPLOY.md` y `VISUAL_QA.md`.
+
+Archivos de auditoría: `BUG_VARIANTS_ROOT_CAUSE.md`, `ADMIN_UX_AUDIT.md`, `DESIGN_SYSTEM_V11.md`, `VISUAL_QA.md`, `CHANGELOG_V11.md`.
+
+---
+
 # Bien Amargos + Bien Yerbados — V9.2
 
 V9.2 corrige el rumbo visual de Home y ProductPage con un criterio más cercano a ecommerce de marca real: fotografía donde corresponde, superficies limpias donde corresponde y jerarquía comercial clara.
