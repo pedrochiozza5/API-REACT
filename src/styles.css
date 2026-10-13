@@ -737,3 +737,21 @@ textarea.checkout-input{padding-top:12px;padding-bottom:12px}
 .admin-image-action:hover:not(:disabled){background:#e7f0e7}
 .admin-image-action:disabled{opacity:.32;cursor:not-allowed}
 .admin-image-action:focus-visible{outline:3px solid #a5beaa;outline-offset:2px}
+
+/* V11.3.1 — White-first storefront. Keep banner and actual product photography. */
+.storefront-page,.storefront-backdrop,.home-clean-flow,
+.storefront-page--yellow .home-clean-flow,
+.home-clean-flow #favoritos,.home-clean-flow #categorias,
+.storefront-page--yellow .home-clean-flow #favoritos,
+.storefront-page--yellow .home-clean-flow #categorias,
+.product-atmosphere,.product-story-shell{background:#fff}
+.home-clean-flow::before{content:none}
+.home-clean-flow #favoritos,.home-clean-flow #categorias{border-block:1px solid rgba(23,55,34,.055)}
+.v11-product-stage{background:#f7f8f4}
+.v11-product-stage--yerbados{background:#faf7f1}
+.product-purchase-rail{background:#fbf8f1}
+.coastal-interlude__inner{background:#173f2e;box-shadow:0 14px 38px rgba(7,28,18,.11)}
+.coastal-interlude--yellow .coastal-interlude__inner{background:#344c32}
+.product-atmosphere__inner{background:#173f2e;box-shadow:0 14px 38px rgba(7,31,18,.10)}
+@media(min-width:1024px){.product-story-shell{background:#fff;border-color:rgba(18,49,32,.08);box-shadow:0 14px 40px rgba(12,39,24,.07)}}
+@media(max-width:767px){.product-purchase-rail{background:#fbf8f1}}

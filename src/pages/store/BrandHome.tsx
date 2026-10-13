@@ -17,7 +17,7 @@ export function BrandHome({ brand }: { brand: BrandId }) {
   const categories = useQuery({ queryKey: ['categories', brand], queryFn: ({signal}) => apiGet<Category[]>(`/api/categories?brand=${brand}`, signal), staleTime: 5 * 60_000 });
 
   return <main className={`storefront-page ${brand === 'enyerbados' ? 'storefront-page--yellow' : 'storefront-page--green'}`}>
-    <StoreBackdrop brand={brand} mode="coastal" />
+    <StoreBackdrop brand={brand} />
     <div className="storefront-content">
       <Header brand={brand} />
       <EditorialBannerCarousel brand={brand} />

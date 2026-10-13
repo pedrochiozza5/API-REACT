@@ -113,7 +113,7 @@ export function ProductPage() {
   </main>;
 
   return <main className={`storefront-page ${yerbados ? 'storefront-page--yellow' : 'storefront-page--green'} min-h-screen overflow-x-hidden pt-[96px] sm:pt-[108px]`}>
-    <StoreBackdrop brand={brand} mode="coastal" />
+    <StoreBackdrop brand={brand} />
     <div className="storefront-content">
       <Header brand={brand} solid hideMobileDock />
 

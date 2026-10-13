@@ -1,7 +1,7 @@
 {
   "name": "bienamargos-bienyerbados-dual-store",
   "private": true,
-  "version": "11.3.0",
+  "version": "11.3.1",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k -n API,WEB \"npm:dev:server\" \"npm:dev:client\"",
